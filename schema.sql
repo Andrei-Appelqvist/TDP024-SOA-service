@@ -1,4 +1,4 @@
--- A table that stores all the tasks in the system
+-- A table that stores all the tasks in the system.
 drop table if exists task cascade;
 create table task(
     id serial primary key,
@@ -7,7 +7,7 @@ create table task(
     list int references list(id)
 );
 
--- A table that stores all the lists in the system
+-- A table that stores all the lists in the system.
 drop table if exists list cascade;
 create table list(
     id serial primary key,
