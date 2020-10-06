@@ -14,23 +14,28 @@ db.connect()
 def home():
     return "<h1>TITLE</h1><p>BANK.</p>"
 
-@app.route('/list', methods=['GET'])
+@app.route('/bank/list', methods=['GET'])
 def list_all():
     banks = db.list_all_banks()
     return json.dumps(banks, default=str)
 
-@app.route('/find.name', methods=['GET'])
+@app.route('/bank/find.name', methods=['GET'])
 def find_by_name():
     name = request.args.get('name')
     banks = db.find_bank_by_name(name)
-    return json.dumps(banks, default=str)
+    if len(banks) > 0:
+        return json.dumps(banks[0], default=str)
+    return 'null'
 
 
-@app.route('/find.key', methods=['GET'])
+
+@app.route('/bank/find.key', methods=['GET'])
 def find_by_key():
     key = request.args.get('key')
     banks = db.find_bank_by_key(key)
-    return json.dumps(banks, default=str)
+    if len(banks) > 0:
+        return json.dumps(banks[0], default=str)
+    return 'null'
 
 
 app.run(host='127.0.0.1', port=8070)
