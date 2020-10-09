@@ -1,6 +1,6 @@
-/home/andrei-wsl/tdp024/git-repo-tdp024/SOA-Labb/account-project/account-xfinal-test/src/test/java/se/liu/ida/tdp024/account/xfinal/test/util/AccountDTO.java
-/home/andrei-wsl/tdp024/git-repo-tdp024/SOA-Labb/account-project/account-xfinal-test/src/test/java/se/liu/ida/tdp024/account/xfinal/test/account/TransactionTest.java
-/home/andrei-wsl/tdp024/git-repo-tdp024/SOA-Labb/account-project/account-xfinal-test/src/test/java/se/liu/ida/tdp024/account/xfinal/test/util/TransactionDTO.java
-/home/andrei-wsl/tdp024/git-repo-tdp024/SOA-Labb/account-project/account-xfinal-test/src/test/java/se/liu/ida/tdp024/account/xfinal/test/account/AccountCreateTest.java
-/home/andrei-wsl/tdp024/git-repo-tdp024/SOA-Labb/account-project/account-xfinal-test/src/test/java/se/liu/ida/tdp024/account/xfinal/test/util/FinalConstants.java
-/home/andrei-wsl/tdp024/git-repo-tdp024/SOA-Labb/account-project/account-xfinal-test/src/test/java/se/liu/ida/tdp024/account/xfinal/test/account/AccountFindTest.java
+/home/andrei-wsl/tdp024/git-repo-tdp024/SOA/account-project/account-xfinal-test/src/test/java/se/liu/ida/tdp024/account/xfinal/test/util/AccountDTO.java
+/home/andrei-wsl/tdp024/git-repo-tdp024/SOA/account-project/account-xfinal-test/src/test/java/se/liu/ida/tdp024/account/xfinal/test/account/TransactionTest.java
+/home/andrei-wsl/tdp024/git-repo-tdp024/SOA/account-project/account-xfinal-test/src/test/java/se/liu/ida/tdp024/account/xfinal/test/util/FinalConstants.java
+/home/andrei-wsl/tdp024/git-repo-tdp024/SOA/account-project/account-xfinal-test/src/test/java/se/liu/ida/tdp024/account/xfinal/test/util/TransactionDTO.java
+/home/andrei-wsl/tdp024/git-repo-tdp024/SOA/account-project/account-xfinal-test/src/test/java/se/liu/ida/tdp024/account/xfinal/test/account/AccountFindTest.java
+/home/andrei-wsl/tdp024/git-repo-tdp024/SOA/account-project/account-xfinal-test/src/test/java/se/liu/ida/tdp024/account/xfinal/test/account/AccountCreateTest.java

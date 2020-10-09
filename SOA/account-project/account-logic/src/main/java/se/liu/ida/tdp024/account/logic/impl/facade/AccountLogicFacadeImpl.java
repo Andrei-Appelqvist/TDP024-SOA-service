@@ -49,21 +49,17 @@ public class AccountLogicFacadeImpl implements AccountLogicFacade {
 
     @Override
     public ArrayList<String> findPerson(String person){
-      return accountEntityFacade.findAccounts(person);
+      System.out.printf("%s", accountEntityFacade.findAccounts(person));
+      return new ArrayList();
     }
 
     @Override
-    public boolean debitAccount(String id, Integer amount){
+    public boolean debitAccount(long id, Integer amount){
       return accountEntityFacade.debitAccount(id, amount);
     }
 
     @Override
-    public boolean creditAccount(String id, Integer amount){
+    public boolean creditAccount(long id, Integer amount){
       return accountEntityFacade.creditAccount(id, amount);
     }
-
-    public ArrayList<String> getTransactions(String id){
-      return accountEntityFacade.getTransactions(id);
-    }
-
 }

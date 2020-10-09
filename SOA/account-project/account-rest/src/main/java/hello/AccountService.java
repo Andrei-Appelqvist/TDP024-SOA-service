@@ -5,8 +5,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import se.liu.ida.tdp024.account.logic.api.facade.AccountLogicFacade;
+import se.liu.ida.tdp024.account.logic.api.facade.TransactionLogicFacade;
 import se.liu.ida.tdp024.account.logic.impl.facade.AccountLogicFacadeImpl;
+import se.liu.ida.tdp024.account.logic.impl.facade.TransactionLogicFacadeImpl;
 import se.liu.ida.tdp024.account.data.impl.db.facade.AccountEntityFacadeDB;
+import se.liu.ida.tdp024.account.data.impl.db.facade.TransactionEntityFacadeDB;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import java.util.ArrayList;
@@ -18,6 +21,7 @@ import se.liu.ida.tdp024.account.util.json.AccountJsonSerializerImpl;
 public class AccountService {
 
   private final AccountLogicFacade accountlogicfacade = new AccountLogicFacadeImpl(new AccountEntityFacadeDB());
+  private final TransactionLogicFacade transactionlogicfacade = new TransactionLogicFacadeImpl(new TransactionEntityFacadeDB());
   private static final AccountJsonSerializerImpl jsonSerializer = new AccountJsonSerializerImpl();
 
   @RequestMapping("/account/create")
@@ -38,9 +42,9 @@ public class AccountService {
   }
 
   @RequestMapping("/account/debit")
-  public ResponseEntity debit(@RequestParam String id, @RequestParam Integer amount) {
+  public ResponseEntity debit(@RequestParam long id, @RequestParam Integer amount) {
     boolean status = accountlogicfacade.debitAccount(id, amount);
-
+    transactionlogicfacade.addTransaction("DEBIT", id, amount, status);
     if(status){
       return new ResponseEntity(status, HttpStatus.OK);
 
@@ -50,9 +54,9 @@ public class AccountService {
   }
 
   @RequestMapping("/account/credit")
-  public ResponseEntity credit(@RequestParam String id, @RequestParam Integer amount){
+  public ResponseEntity credit(@RequestParam long id, @RequestParam Integer amount){
     boolean status = accountlogicfacade.creditAccount(id, amount);
-
+    transactionlogicfacade.addTransaction("CREDIT", id, amount, status);
     if(status)
     {
       return new ResponseEntity(HttpStatus.OK);
@@ -61,8 +65,8 @@ public class AccountService {
   }
 
   @RequestMapping("/account/transactions")
-  public ResponseEntity transactions(@RequestParam String id) {
-    ArrayList trans_list = accountlogicfacade.getTransactions(id);
+  public ResponseEntity transactions(@RequestParam long id) {
+    ArrayList trans_list = transactionlogicfacade.getTransactions(id);
     String json = jsonSerializer.toJson(trans_list);
     return new ResponseEntity(json,HttpStatus.OK);
   }

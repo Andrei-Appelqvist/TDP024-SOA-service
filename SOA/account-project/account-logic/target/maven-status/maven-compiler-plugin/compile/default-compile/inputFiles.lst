@@ -1,2 +1,4 @@
-/home/andrei-wsl/tdp024/git-repo-tdp024/SOA-Labb/account-project/account-logic/src/main/java/se/liu/ida/tdp024/account/logic/api/facade/AccountLogicFacade.java
-/home/andrei-wsl/tdp024/git-repo-tdp024/SOA-Labb/account-project/account-logic/src/main/java/se/liu/ida/tdp024/account/logic/impl/facade/AccountLogicFacadeImpl.java
+/home/andrei-wsl/tdp024/git-repo-tdp024/SOA/account-project/account-logic/src/main/java/se/liu/ida/tdp024/account/logic/api/facade/TransactionLogicFacade.java
+/home/andrei-wsl/tdp024/git-repo-tdp024/SOA/account-project/account-logic/src/main/java/se/liu/ida/tdp024/account/logic/api/facade/AccountLogicFacade.java
+/home/andrei-wsl/tdp024/git-repo-tdp024/SOA/account-project/account-logic/src/main/java/se/liu/ida/tdp024/account/logic/impl/facade/TransactionLogicFacadeImpl.java
+/home/andrei-wsl/tdp024/git-repo-tdp024/SOA/account-project/account-logic/src/main/java/se/liu/ida/tdp024/account/logic/impl/facade/AccountLogicFacadeImpl.java

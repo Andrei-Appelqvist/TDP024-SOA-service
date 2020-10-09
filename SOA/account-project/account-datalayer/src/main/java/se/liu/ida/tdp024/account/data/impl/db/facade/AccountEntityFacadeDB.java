@@ -1,6 +1,14 @@
 package se.liu.ida.tdp024.account.data.impl.db.facade;
 import java.util.ArrayList;
 import se.liu.ida.tdp024.account.data.api.facade.AccountEntityFacade;
+import se.liu.ida.tdp024.account.data.api.entity.Account;
+import se.liu.ida.tdp024.account.data.impl.db.util.EMF;
+import se.liu.ida.tdp024.account.data.impl.db.entity.AccountDB;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import java.util.List;
+import com.google.gson.Gson;
+
 
 public class AccountEntityFacadeDB implements AccountEntityFacade {
 
@@ -11,36 +19,55 @@ public class AccountEntityFacadeDB implements AccountEntityFacade {
 
   @Override
   public boolean create(String accounttype, String personkey, String bankkey){
-    System.out.printf("%s, %s, %s",accounttype, personkey, bankkey);
+    EntityManager em = EMF.getEntityManager();
+    em.getTransaction().begin();
+    Account acc = new AccountDB();
+    acc.setPersonKey(personkey);
+    acc.setAccountType(accounttype);
+    //System.out.printf("=%s=", acc.getId());
+    em.persist(acc);
+    em.flush();
+    System.out.printf("¤¤%s¤¤", acc.getId());
+    em.getTransaction().commit();
+    em.close();
+    //System.out.printf("%s, %s, %s",accounttype, personkey, bankkey);
     return true;
   }
 
   @Override
-  public ArrayList findAccounts(String personkey){
-    System.out.printf("%s", personkey);
+  public List<Account> findAccounts(String personkey){
+    EntityManager em = EMF.getEntityManager();
     ArrayList accounts = new ArrayList();
     accounts.add(personkey);
+    Query query = em.createQuery("SELECT c FROM AccountDB c WHERE c.personKey = :personkey");
+    query.setParameter("personkey", personkey);
+    List asdf = query.getResultList();
+    Account a = (Account) asdf.get(0);
+    System.out.printf("%s", a.getPersonKey());
+    //Account asdf = em.find(AccountDB.class, personkey);
     return accounts;
   }
 
   @Override
-  public boolean debitAccount(String id, Integer amount){
+  public boolean debitAccount(long id, Integer amount){
     System.out.printf("%s, %d", id, amount);
     return true;
   }
 
   @Override
-  public boolean creditAccount(String id, Integer amount){
-    System.out.printf("%s, %d", id, amount);
+  public boolean creditAccount(long id, Integer amount){
+    EntityManager em = EMF.getEntityManager();
+    Account foundaccount = em.find(AccountDB.class, id);
+    System.out.printf("????????????%s?????????????", foundaccount);
     return true;
   }
 
   @Override
-  public ArrayList getTransactions(String id){
-    System.out.printf("%s", id);
-    ArrayList transactions = new ArrayList();
-    transactions.add(id);
-    return transactions;
+  public Account getAccount(long id) {
+    EntityManager em = EMF.getEntityManager();
+    Account foundaccount = em.find(AccountDB.class, id);
+    System.out.printf("%s", foundaccount.getAccountType());
+    return foundaccount;
   }
-  
+
 }

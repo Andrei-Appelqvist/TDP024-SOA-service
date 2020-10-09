@@ -8,9 +8,8 @@ public interface AccountLogicFacade {
 
     public boolean register(String accounttype,String person,String bank);
     public ArrayList<String> findPerson(String person);
-    public boolean debitAccount(String id, Integer amount);
-    public boolean creditAccount(String id, Integer amount);
-    public ArrayList<String> getTransactions(String id);
+    public boolean debitAccount(long id, Integer amount);
+    public boolean creditAccount(long id, Integer amount);
 
 
 
