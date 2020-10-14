@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.util.List;
 import com.google.gson.Gson;
+import javax.persistence.LockModeType;
 
 
 public class AccountEntityFacadeDB implements AccountEntityFacade {
@@ -20,46 +21,62 @@ public class AccountEntityFacadeDB implements AccountEntityFacade {
   @Override
   public boolean create(String accounttype, String personkey, String bankkey){
     EntityManager em = EMF.getEntityManager();
-    em.getTransaction().begin();
-    Account acc = new AccountDB();
-    acc.setPersonKey(personkey);
-    acc.setAccountType(accounttype);
-    //System.out.printf("=%s=", acc.getId());
-    em.persist(acc);
-    em.flush();
-    System.out.printf("¤¤%s¤¤", acc.getId());
-    em.getTransaction().commit();
-    em.close();
-    //System.out.printf("%s, %s, %s",accounttype, personkey, bankkey);
-    return true;
+    try{
+      em.getTransaction().begin();
+      Account acc = new AccountDB();
+      acc.setPersonKey(personkey);
+      acc.setAccountType(accounttype);
+      acc.setHoldings(0);
+      em.persist(acc);
+      em.flush();
+      System.out.printf("¤¤%s¤¤", acc.getId());
+      em.getTransaction().commit();
+      return true;
+    } catch(Exception e){
+      return false;
+    } finally {
+      em.close();
+    }
   }
 
   @Override
-  public List<Account> findAccounts(String personkey){
+  public String findAccounts(String personkey){
     EntityManager em = EMF.getEntityManager();
-    ArrayList accounts = new ArrayList();
-    accounts.add(personkey);
-    Query query = em.createQuery("SELECT c FROM AccountDB c WHERE c.personKey = :personkey");
-    query.setParameter("personkey", personkey);
-    List asdf = query.getResultList();
-    Account a = (Account) asdf.get(0);
-    System.out.printf("%s", a.getPersonKey());
-    //Account asdf = em.find(AccountDB.class, personkey);
-    return accounts;
+    try {
+      List<Account> accounts = new ArrayList();
+      Query query = em.createQuery("SELECT c FROM AccountDB c WHERE c.personKey = :personkey");
+      query.setParameter("personkey", personkey);
+      accounts = query.getResultList();
+      Gson gson = new Gson();
+      String strlst = gson.toJson(accounts);
+      return strlst;
+    } catch (Exception e){
+      return null;
+    } finally{
+      em.close();
+    }
   }
 
   @Override
   public boolean debitAccount(long id, Integer amount){
-    System.out.printf("%s, %d", id, amount);
-    return true;
+    EntityManager em = EMF.getEntityManager();
+    em.getTransaction().begin();
+    Account foundaccount = em.find(AccountDB.class, id, LockModeType.PESSIMISTIC_WRITE);
+    boolean status = foundaccount.removeHoldings(amount);
+    em.getTransaction().commit();
+    em.close();
+    return status;
   }
 
   @Override
   public boolean creditAccount(long id, Integer amount){
     EntityManager em = EMF.getEntityManager();
-    Account foundaccount = em.find(AccountDB.class, id);
-    System.out.printf("????????????%s?????????????", foundaccount);
-    return true;
+    em.getTransaction().begin();
+    Account foundaccount = em.find(AccountDB.class, id, LockModeType.PESSIMISTIC_WRITE);
+    boolean status = foundaccount.addHoldings(amount);
+    em.getTransaction().commit();
+    em.close();
+    return status;
   }
 
   @Override

@@ -7,7 +7,7 @@ public interface AccountLogicFacade {
     public String test();
 
     public boolean register(String accounttype,String person,String bank);
-    public ArrayList<String> findPerson(String person);
+    public String findPerson(String person);
     public boolean debitAccount(long id, Integer amount);
     public boolean creditAccount(long id, Integer amount);
 

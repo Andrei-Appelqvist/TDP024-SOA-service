@@ -13,6 +13,8 @@ public interface Account extends Serializable {
     public void setBankKey(String bankKey);
     public Integer getHoldings();
     public void setHoldings(Integer holdings);
+    public boolean addHoldings(Integer holdings);
+    public boolean removeHoldings(Integer holdings);
 
 
 }

@@ -60,4 +60,16 @@ public class AccountDB implements Account {
     this.holdings = holdings;
   }
 
+  public boolean addHoldings(Integer holdings){
+    this.holdings += holdings;
+    return true;
+  }
+
+  public boolean removeHoldings(Integer holdings){
+    if(this.holdings - holdings > 0) {
+      this.holdings -= holdings;
+      return true;
+    }
+    return false;
+  }
 }

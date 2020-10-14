@@ -18,7 +18,7 @@ public class TransactionDB implements Transaction {
   private String type;
   private Integer amount;
   private String created;
-  private boolean status;
+  private String status;
 
   @ManyToOne(targetEntity = AccountDB.class)
   private Account account;
@@ -64,12 +64,16 @@ public class TransactionDB implements Transaction {
     this.account = account;
   }
 
-  public boolean getStatus(){
+  public String getStatus(){
     return status;
   }
 
   public void setStatus(boolean status){
-    this.status = status;
+    if(status){
+      this.status = "OK";
+    } else {
+      this.status = "FAILED";
+    }
   }
 
 

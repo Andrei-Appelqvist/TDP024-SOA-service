@@ -6,5 +6,5 @@ import se.liu.ida.tdp024.account.data.api.entity.Transaction;
 
 public interface TransactionEntityFacade {
   public void addTransaction(String type, long id, Integer amount, boolean status);
-  public ArrayList<Transaction> findTransactions(long id);
+  public String findTransactions(long id);
 }

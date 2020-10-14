@@ -26,16 +26,13 @@ public class TransactionLogicFacadeImpl implements TransactionLogicFacade {
   @Override
   public void addTransaction(String type, long id, Integer amount, boolean status){
     transactionEntityFacade.addTransaction(type, id, amount, status);
-      //System.out.printf("%s", "BEHOLD, MY ADDTRANSACTIONINATOR!!!");
   }
 
   @Override
-  public ArrayList<String> getTransactions(long id){
-    //System.out.printf("%s", id);
-    ArrayList transactions = new ArrayList();
-    System.out.printf("%s", transactionEntityFacade.findTransactions(id));
-    transactions.add(id);
-    return transactions;
+  public String getTransactions(long id){
+    String asdf = transactionEntityFacade.findTransactions(id);
+    System.out.printf("%s", asdf);
+    return asdf;
   }
 
 }

@@ -48,9 +48,9 @@ public class AccountLogicFacadeImpl implements AccountLogicFacade {
     }
 
     @Override
-    public ArrayList<String> findPerson(String person){
-      System.out.printf("%s", accountEntityFacade.findAccounts(person));
-      return new ArrayList();
+    public String findPerson(String person){
+      String accounts = accountEntityFacade.findAccounts(person);
+      return accounts;
     }
 
     @Override

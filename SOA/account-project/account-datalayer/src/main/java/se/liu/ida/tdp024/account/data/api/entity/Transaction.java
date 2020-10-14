@@ -13,6 +13,6 @@ public interface Transaction extends Serializable {
   public void setCreated(String created);
   public Account getAccount();
   public void setAccount(Account account);
-  public boolean getStatus();
+  public String getStatus();
   public void setStatus(boolean status);
 }

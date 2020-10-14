@@ -18,38 +18,50 @@ public class TransactionEntityFacadeDB implements TransactionEntityFacade {
 
     Gson gson = new Gson();
     EntityManager em = EMF.getEntityManager();
+    try {
+      em.getTransaction().begin();
 
+      Account acc = em.find(AccountDB.class, id);
+      Transaction trans = new TransactionDB();
 
-    em.getTransaction().begin();
+      if (acc == null)
+      {
+        System.out.printf("%s,", "//////account is null/////");
+      }
+      String accjson = gson.toJson(acc);
 
-    Account acc = em.find(AccountDB.class, id);
-    Transaction trans = new TransactionDB();
+      System.out.printf("%s,", accjson);
+      trans.setAccount(acc);
+      trans.setType(type);
+      trans.setAmount(amount);
+      trans.setStatus(status);
+      trans.setCreated("2020-10-09 10:41");
 
-    if (acc == null)
-    {
-      System.out.printf("%s,", "//////account is null/////");
+      em.persist(trans);
+      em.getTransaction().commit();
+      String json = gson.toJson(trans);
+      System.out.printf("%s,", "=====================");
+      System.out.printf("%s,", json);
+    } catch(Exception e){
+
+    } finally {
+      em.close();
     }
-    String accjson = gson.toJson(acc);
-
-    System.out.printf("%s,", accjson);
-    trans.setAccount(acc);
-    trans.setType(type);
-    trans.setAmount(amount);
-    trans.setStatus(true);
-    trans.setCreated("2020-10-09 10:41");
-
-    em.persist(trans);
-    em.getTransaction().commit();
-    em.close();
-    String json = gson.toJson(trans);
-    System.out.printf("%s,", "=====================");
-    System.out.printf("%s,", json);
+    //Ska bort
   }
 
 
   @Override
-  public ArrayList<Transaction> findTransactions(long id){
-    return new ArrayList();
+  public String findTransactions(long id){
+    List<Transaction> transactions = new ArrayList();
+    EntityManager em = EMF.getEntityManager();
+    Query query = em.createQuery("SELECT c FROM TransactionDB c WHERE c.account.id = :id");
+    query.setParameter("id", id);
+    transactions = query.getResultList();
+    Gson gson = new Gson();
+    String strlst = gson.toJson(transactions);
+    return strlst;
+
   }
 
 
