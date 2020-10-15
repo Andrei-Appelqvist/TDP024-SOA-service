@@ -29,10 +29,13 @@ def find_by_name():
 @app.route('/person/find.key', methods=['GET'])
 def find_by_key():
     key = request.args.get('key')
-    people = db.find_person_by_key(key)
-    if len(people) > 0:
-        return json.dumps(people, default=str)
-    return 'null'
+    if(len(key) > 0):
+        people = db.find_person_by_key(key)
+        if len(people) > 0:
+            return json.dumps(people, default=str)
+        return 'null'
+    else:
+        return 'null'
 
 
 app.run(host='127.0.0.1', port=8060)

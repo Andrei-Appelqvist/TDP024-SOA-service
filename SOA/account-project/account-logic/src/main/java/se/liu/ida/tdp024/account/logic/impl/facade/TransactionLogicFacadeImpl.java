@@ -31,7 +31,7 @@ public class TransactionLogicFacadeImpl implements TransactionLogicFacade {
   @Override
   public String getTransactions(long id){
     String asdf = transactionEntityFacade.findTransactions(id);
-    System.out.printf("%s", asdf);
+    //System.out.printf("%s", asdf);
     return asdf;
   }
 

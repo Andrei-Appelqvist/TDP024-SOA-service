@@ -66,7 +66,7 @@ public class AccountDB implements Account {
   }
 
   public boolean removeHoldings(Integer holdings){
-    if(this.holdings - holdings > 0) {
+    if(this.holdings - holdings >= 0) {
       this.holdings -= holdings;
       return true;
     }

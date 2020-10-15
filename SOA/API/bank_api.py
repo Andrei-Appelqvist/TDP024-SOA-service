@@ -32,10 +32,13 @@ def find_by_name():
 @app.route('/bank/find.key', methods=['GET'])
 def find_by_key():
     key = request.args.get('key')
-    banks = db.find_bank_by_key(key)
-    if len(banks) > 0:
-        return json.dumps(banks[0], default=str)
-    return 'null'
+    if(len(key) > 0):
+        banks = db.find_bank_by_key(key)
+        if len(banks) > 0:
+            return json.dumps(banks[0], default=str)
+        return 'null'
+    else:
+        return 'null'
 
 
 app.run(host='127.0.0.1', port=8070)

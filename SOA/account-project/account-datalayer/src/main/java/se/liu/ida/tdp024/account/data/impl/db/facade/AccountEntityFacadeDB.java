@@ -20,6 +20,12 @@ public class AccountEntityFacadeDB implements AccountEntityFacade {
 
   @Override
   public boolean create(String accounttype, String personkey, String bankkey){
+    ArrayList<String> allowed = new ArrayList();
+    allowed.add("CHECK");
+    allowed.add("SAVINGS");
+    if(!allowed.contains(accounttype)){
+      return false;
+    }
     EntityManager em = EMF.getEntityManager();
     try{
       em.getTransaction().begin();
@@ -28,8 +34,8 @@ public class AccountEntityFacadeDB implements AccountEntityFacade {
       acc.setAccountType(accounttype);
       acc.setHoldings(0);
       em.persist(acc);
-      em.flush();
-      System.out.printf("¤¤%s¤¤", acc.getId());
+      //em.flush();
+      //System.out.printf("¤¤%s¤¤", acc.getId());
       em.getTransaction().commit();
       return true;
     } catch(Exception e){
@@ -83,7 +89,6 @@ public class AccountEntityFacadeDB implements AccountEntityFacade {
   public Account getAccount(long id) {
     EntityManager em = EMF.getEntityManager();
     Account foundaccount = em.find(AccountDB.class, id);
-    System.out.printf("%s", foundaccount.getAccountType());
     return foundaccount;
   }
 

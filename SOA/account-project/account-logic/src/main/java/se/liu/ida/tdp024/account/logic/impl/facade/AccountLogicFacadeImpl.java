@@ -30,17 +30,18 @@ public class AccountLogicFacadeImpl implements AccountLogicFacade {
     }
 
     @Override
-    public boolean register(String accounttype,String person,String bank){
+    public boolean register(String person, String bank, String accounttype){
       //Kolla om person finns mot Python API (PersonApi)
       String response = httpHelper.get("http://localhost:8060/person" + "/find.key?key="+person);
-      if (response =="null"){
+      if (response.equals("null")){
         return false;
       }
       //Hämta bankkey med hjälp av namn från PythonApi (BankApi)
       response = httpHelper.get("http://localhost:8070/bank" + "/find.name?name="+bank);
-      if (response == "null"){
+      if (response.equals("null")){
         return false;
       }
+
       Map<String, Object> bankObject = jsonSerializer.fromJson(response, Map.class);
       Integer bankint = (Integer) bankObject.get("key");
       String bankkey = Integer.toString(bankint);

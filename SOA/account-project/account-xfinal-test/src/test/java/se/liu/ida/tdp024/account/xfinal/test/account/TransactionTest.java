@@ -1,3 +1,4 @@
+
 package se.liu.ida.tdp024.account.xfinal.test.account;
 
 import java.util.ArrayList;
@@ -18,7 +19,6 @@ public class TransactionTest {
 
     private static final HTTPHelper httpHelper = new HTTPHelperImpl();
     private static final AccountJsonSerializer jsonSerializer = new AccountJsonSerializerImpl();
-
     @Test
     public void testFind() {
 
@@ -37,6 +37,7 @@ public class TransactionTest {
         AccountDTO[] accountDTos = jsonSerializer.fromJson(accountJson, AccountDTO[].class);
 
         AccountDTO accountDTO = accountDTos[0];
+        System.out.printf("%s", accountDTO);
 
 
         httpHelper.get(FinalConstants.ENDPOINT + "account/credit", "id", accountDTO.getId() + "", "amount", 200 + "");
@@ -166,10 +167,10 @@ public class TransactionTest {
 
 
     }
-    
+
     @Test
     public void testCreditConcurrency() {
-        
+
          {
             String person = "4";
             String bank = "SWEDBANK";
@@ -179,12 +180,13 @@ public class TransactionTest {
         }
 
 
+
         String accountJson = httpHelper.get(FinalConstants.ENDPOINT + "account/find/person", "person", "4");
         AccountDTO[] accountDTos = jsonSerializer.fromJson(accountJson, AccountDTO[].class);
         final AccountDTO accountDTO = accountDTos[0];
 
 
-        
+
         //Create lots of small credits
         final int size = 1000;
         final int amount = 10;
@@ -221,6 +223,7 @@ public class TransactionTest {
             AccountDTO refreshedAccountDTO = jsonSerializer.fromJson(checkJson, AccountDTO[].class)[0];
             Assert.assertEquals(size * amount, refreshedAccountDTO.getHoldings());
         }
-        
+
     }
+    
 }

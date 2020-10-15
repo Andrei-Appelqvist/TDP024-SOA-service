@@ -26,11 +26,11 @@ public class TransactionEntityFacadeDB implements TransactionEntityFacade {
 
       if (acc == null)
       {
-        System.out.printf("%s,", "//////account is null/////");
+        //System.out.printf("%s,", "//////account is null/////");
       }
       String accjson = gson.toJson(acc);
 
-      System.out.printf("%s,", accjson);
+      //System.out.printf("%s,", accjson);
       trans.setAccount(acc);
       trans.setType(type);
       trans.setAmount(amount);
@@ -40,8 +40,8 @@ public class TransactionEntityFacadeDB implements TransactionEntityFacade {
       em.persist(trans);
       em.getTransaction().commit();
       String json = gson.toJson(trans);
-      System.out.printf("%s,", "=====================");
-      System.out.printf("%s,", json);
+      //System.out.printf("%s,", "=====================");
+      //System.out.printf("%s,", json);
     } catch(Exception e){
 
     } finally {

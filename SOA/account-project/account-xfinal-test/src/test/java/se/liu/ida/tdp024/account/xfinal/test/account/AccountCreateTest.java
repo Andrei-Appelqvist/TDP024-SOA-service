@@ -11,7 +11,6 @@ import se.liu.ida.tdp024.account.xfinal.test.util.FinalConstants;
 public class AccountCreateTest {
 
     private static final HTTPHelper httpHelper = new HTTPHelperImpl();
-
     @Test
     public void createSuccess() {
 
@@ -122,11 +121,13 @@ public class AccountCreateTest {
     public void createFailure() {
 
         {
+            System.out.printf("%s", "#######################################");
             String person = "3";
             String bank = "SWEDBANK";
             String accountType = "CREDITCARD";
             String response = httpHelper.get(FinalConstants.ENDPOINT + "account/create/", "person", person, "bank", bank, "accounttype", accountType);
             Assert.assertEquals("FAILED", response);
+            System.out.printf("%s", "2#######################################");
         }
         {
             String person = "01219210";
@@ -263,8 +264,7 @@ public class AccountCreateTest {
             Assert.assertEquals("FAILED", response);
         }
 
-
-        /* Wrong endpoint (i.e. incorrect request) */
+        // Wrong endpoint (i.e. incorrect request)
         {
             String person = "3";
             String bank = "SWEDBANK";
@@ -286,8 +286,5 @@ public class AccountCreateTest {
             String response = httpHelper.get(FinalConstants.ENDPOINT + "account/account/create/", "person", person, "bank", bank, "accounttype", accountType);
             Assert.assertEquals("", response);
         }
-
-
-
     }
 }

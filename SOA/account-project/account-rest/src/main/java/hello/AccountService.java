@@ -25,12 +25,16 @@ public class AccountService {
   private static final AccountJsonSerializerImpl jsonSerializer = new AccountJsonSerializerImpl();
 
   @RequestMapping("/account/create")
-  public ResponseEntity create(@RequestParam String accounttype, @RequestParam String person,@RequestParam String bank) {
-    boolean status = accountlogicfacade.register(accounttype, person, bank);
-    if(status) {
-      return new ResponseEntity(HttpStatus.OK);
+  public String create(@RequestParam (required = false) String person,  @RequestParam (required = false) String bank, @RequestParam (required = false) String accounttype) {
+    if(person == null || bank==null ||accounttype==null){
+      return "FAILED";
     }
-    return new ResponseEntity("{\"message\":\"Account could not be created\"}", HttpStatus.FAILED_DEPENDENCY);
+    boolean status = accountlogicfacade.register(person, bank, accounttype);
+    //System.out.printf("¤¤¤¤¤¤¤¤¤%s¤¤¤¤¤¤¤¤¤¤¤¤¤", status);
+    if(status) {
+      return "OK";//new ResponseEntity("OK", HttpStatus.OK);
+    }
+    return "FAILED";//new ResponseEntity("FAILED", HttpStatus.NOT_ACC);
     //return String.format("Route called with %s", word);
   }
 
