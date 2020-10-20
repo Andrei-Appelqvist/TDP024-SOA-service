@@ -6,7 +6,7 @@ import se.liu.ida.tdp024.account.data.api.entity.Account;
 public interface AccountEntityFacade {
     public String test();
     public boolean create(String accounttype, String personkey, String bankkey);
-    public String findAccounts(String personkey);
+    public List<Account> findAccounts(String personkey);
     public boolean debitAccount(long id, Integer amount);
     public boolean creditAccount(long id, Integer amount);
     public Account getAccount(long id);

@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.ArrayList;
 import se.liu.ida.tdp024.account.util.json.AccountJsonSerializer;
 import se.liu.ida.tdp024.account.util.json.AccountJsonSerializerImpl;
+import se.liu.ida.tdp024.account.util.logger.KafkaObject;
 
 @RestController
 @RequestMapping("account-rest")
@@ -23,9 +24,11 @@ public class AccountService {
   private final AccountLogicFacade accountlogicfacade = new AccountLogicFacadeImpl(new AccountEntityFacadeDB());
   private final TransactionLogicFacade transactionlogicfacade = new TransactionLogicFacadeImpl(new TransactionEntityFacadeDB());
   private static final AccountJsonSerializerImpl jsonSerializer = new AccountJsonSerializerImpl();
+  private static final KafkaObject kafkaBitches = new KafkaObject();
 
   @RequestMapping("/account/create")
   public String create(@RequestParam (required = false) String person,  @RequestParam (required = false) String bank, @RequestParam (required = false) String accounttype) {
+    //kafkaBitches.sendToKafka("error-events", "Kafka Bitchez");
     if(person == null || bank==null ||accounttype==null){
       return "FAILED";
     }
@@ -41,31 +44,30 @@ public class AccountService {
   @RequestMapping("/account/find/person")
   public ResponseEntity findPerson(@RequestParam String person){
     String person_list = accountlogicfacade.findPerson(person);
-    //String json = jsonSerializer.toJson(person_list);
     return new ResponseEntity(person_list, HttpStatus.OK);
   }
 
   @RequestMapping("/account/debit")
-  public ResponseEntity debit(@RequestParam long id, @RequestParam Integer amount) {
+  public String debit(@RequestParam long id, @RequestParam Integer amount) {
     boolean status = accountlogicfacade.debitAccount(id, amount);
     transactionlogicfacade.addTransaction("DEBIT", id, amount, status);
     if(status){
-      return new ResponseEntity(status, HttpStatus.OK);
+      return "OK";
 
     }
-    return new ResponseEntity("{\"message\":\"Something went wrong\"}", HttpStatus.NOT_FOUND);
+    return "FAILED";
 
   }
 
   @RequestMapping("/account/credit")
-  public ResponseEntity credit(@RequestParam long id, @RequestParam Integer amount){
+  public String credit(@RequestParam long id, @RequestParam Integer amount){
     boolean status = accountlogicfacade.creditAccount(id, amount);
     transactionlogicfacade.addTransaction("CREDIT", id, amount, status);
     if(status)
     {
-      return new ResponseEntity(HttpStatus.OK);
+      return "OK";
     }
-    return new ResponseEntity("{\"message\":\"Something went wrong\"}", HttpStatus.NOT_FOUND);
+    return "FAILED";
   }
 
   @RequestMapping("/account/transactions")

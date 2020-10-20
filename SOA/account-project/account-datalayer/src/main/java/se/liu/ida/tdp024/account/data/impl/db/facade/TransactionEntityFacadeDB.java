@@ -10,12 +10,19 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.util.List;
 import com.google.gson.Gson;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class TransactionEntityFacadeDB implements TransactionEntityFacade {
 
   @Override
-  public void addTransaction(String type, long id, Integer amount, boolean status){
-
+  public boolean addTransaction(String type, long id, Integer amount, boolean status){
+    ArrayList<String> allowed = new ArrayList();
+    allowed.add("CREDIT");
+    allowed.add("DEBIT");
+    if(!allowed.contains(type) || amount < 0){
+      return false;
+    }
     Gson gson = new Gson();
     EntityManager em = EMF.getEntityManager();
     try {
@@ -26,41 +33,39 @@ public class TransactionEntityFacadeDB implements TransactionEntityFacade {
 
       if (acc == null)
       {
-        //System.out.printf("%s,", "//////account is null/////");
+        em.getTransaction().commit();
+        return false;
       }
       String accjson = gson.toJson(acc);
 
-      //System.out.printf("%s,", accjson);
       trans.setAccount(acc);
       trans.setType(type);
       trans.setAmount(amount);
       trans.setStatus(status);
-      trans.setCreated("2020-10-09 10:41");
+      SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+      Date date = new Date(System.currentTimeMillis());
+      trans.setCreated(formatter.format(date));
 
       em.persist(trans);
       em.getTransaction().commit();
-      String json = gson.toJson(trans);
-      //System.out.printf("%s,", "=====================");
-      //System.out.printf("%s,", json);
+      return true;
     } catch(Exception e){
-
+      return false;
+      //Skriv grejer till KAfka
     } finally {
       em.close();
     }
-    //Ska bort
   }
 
 
   @Override
-  public String findTransactions(long id){
+  public List<Transaction> findTransactions(long id){
     List<Transaction> transactions = new ArrayList();
     EntityManager em = EMF.getEntityManager();
     Query query = em.createQuery("SELECT c FROM TransactionDB c WHERE c.account.id = :id");
     query.setParameter("id", id);
     transactions = query.getResultList();
-    Gson gson = new Gson();
-    String strlst = gson.toJson(transactions);
-    return strlst;
+    return transactions;
 
   }
 

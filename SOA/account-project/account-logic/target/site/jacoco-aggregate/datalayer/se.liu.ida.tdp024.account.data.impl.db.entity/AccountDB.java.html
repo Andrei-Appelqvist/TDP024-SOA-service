@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AccountDB.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">logic</a> &gt; <a href="../index.html" class="el_bundle">datalayer</a> &gt; <a href="index.source.html" class="el_package">se.liu.ida.tdp024.account.data.impl.db.entity</a> &gt; <span class="el_source">AccountDB.java</span></div><h1>AccountDB.java</h1><pre class="source lang-java linenums">package se.liu.ida.tdp024.account.data.impl.db.entity;
+
+import se.liu.ida.tdp024.account.data.api.entity.Account;
+import se.liu.ida.tdp024.account.data.impl.db.entity.TransactionDB;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+@Entity
+<span class="nc" id="L11">public class AccountDB implements Account {</span>
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private long id;
+
+  private String personKey;
+<span class="nc" id="L18">  private String accountType = new String(&quot;CHECKING&quot;);</span>
+  private String bankKey;
+  private Integer holdings;
+
+
+  public long getId(){
+<span class="nc" id="L24">    return id;</span>
+  }
+
+  public void setId(long id) {
+<span class="nc" id="L28">    this.id = id;</span>
+<span class="nc" id="L29">  }</span>
+
+  public String getPersonKey(){
+<span class="nc" id="L32">      return personKey;</span>
+  }
+
+  public void setPersonKey(String personKey){
+<span class="nc" id="L36">      this.personKey = personKey;</span>
+<span class="nc" id="L37">  }</span>
+
+  public String getAccountType(){
+<span class="nc" id="L40">    return accountType;</span>
+  }
+
+  public void setAccountType(String accountType){
+<span class="nc" id="L44">    this.accountType = accountType;</span>
+<span class="nc" id="L45">  }</span>
+
+  public String getBankKey(){
+<span class="nc" id="L48">    return bankKey;</span>
+  }
+
+  public void setBankKey(String bankKey){
+<span class="nc" id="L52">    this.bankKey = bankKey;</span>
+<span class="nc" id="L53">  }</span>
+
+  public Integer getHoldings(){
+<span class="nc" id="L56">    return holdings;</span>
+  }
+
+  public void setHoldings(Integer holdings){
+<span class="nc" id="L60">    this.holdings = holdings;</span>
+<span class="nc" id="L61">  }</span>
+
+  public boolean addHoldings(Integer holdings){
+<span class="nc" id="L64">    this.holdings += holdings;</span>
+<span class="nc" id="L65">    return true;</span>
+  }
+
+  public boolean removeHoldings(Integer holdings){
+<span class="nc bnc" id="L69" title="All 2 branches missed.">    if(this.holdings - holdings &gt;= 0) {</span>
+<span class="nc" id="L70">      this.holdings -= holdings;</span>
+<span class="nc" id="L71">      return true;</span>
+    }
+<span class="nc" id="L73">    return false;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

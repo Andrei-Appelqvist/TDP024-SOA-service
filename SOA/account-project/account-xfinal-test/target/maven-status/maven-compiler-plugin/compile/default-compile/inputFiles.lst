@@ -5,3 +5,4 @@
 /home/andrei-wsl/tdp024/git-repo-tdp024/SOA/account-project/account-xfinal-test/src/main/java/se/liu/ida/tdp024/account/util/logger/AccountLogger.java
 /home/andrei-wsl/tdp024/git-repo-tdp024/SOA/account-project/account-xfinal-test/src/main/java/se/liu/ida/tdp024/account/util/json/AccountJsonSerializer.java
 /home/andrei-wsl/tdp024/git-repo-tdp024/SOA/account-project/account-xfinal-test/src/main/java/se/liu/ida/tdp024/account/util/http/HTTPHelperImpl.java
+/home/andrei-wsl/tdp024/git-repo-tdp024/SOA/account-project/account-xfinal-test/src/main/java/se/liu/ida/tdp024/account/util/logger/KafkaObject.java

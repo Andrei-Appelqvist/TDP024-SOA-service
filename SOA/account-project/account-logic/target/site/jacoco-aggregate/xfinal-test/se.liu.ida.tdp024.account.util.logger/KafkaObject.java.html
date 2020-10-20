@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>KafkaObject.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">logic</a> &gt; <a href="../index.html" class="el_bundle">xfinal-test</a> &gt; <a href="index.source.html" class="el_package">se.liu.ida.tdp024.account.util.logger</a> &gt; <span class="el_source">KafkaObject.java</span></div><h1>KafkaObject.java</h1><pre class="source lang-java linenums">// # Start the ZooKeeper service
+// $ bin/zookeeper-server-start.sh config/zookeeper.properties
+//
+//
+// # Start the Kafka broker service
+// $ bin/kafka-server-start.sh config/server.properties
+//
+//
+//
+// bin/kafka-topics.sh --create --topic access-events --bootstrap-server localhost:9092
+//
+// bin/kafka-topics.sh --create --topic error-events --bootstrap-server localhost:9092
+//
+// $ bin/kafka-console-consumer.sh --topic error-events --from-beginning --bootstrap-server localhost:9092
+
+package se.liu.ida.tdp024.account.util.logger;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.Producer;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.KafkaException;
+import org.apache.kafka.common.errors.AuthorizationException;
+import org.apache.kafka.common.errors.OutOfOrderSequenceException;
+import org.apache.kafka.common.errors.ProducerFencedException;
+import org.apache.kafka.common.serialization.StringSerializer;
+import java.util.*;
+
+<span class="nc" id="L27">public class KafkaObject {</span>
+
+  public void sendToKafka(String channel , String message) {
+<span class="nc" id="L30">    Properties props = new Properties();</span>
+<span class="nc" id="L31">    props.put(&quot;bootstrap.servers&quot;, &quot;localhost:9092&quot;);</span>
+<span class="nc" id="L32">    props.put(&quot;transactional.id&quot;, &quot;my-transactional-id&quot;);</span>
+<span class="nc" id="L33">    Producer&lt;String, String&gt; producer = new KafkaProducer&lt;&gt;(props, new StringSerializer(), new StringSerializer());</span>
+<span class="nc" id="L34">    producer.initTransactions();</span>
+    try{
+
+<span class="nc" id="L37">      producer.beginTransaction();</span>
+<span class="nc" id="L38">      producer.send(new ProducerRecord&lt;&gt;(channel, &quot;Can't find&quot;, message));</span>
+<span class="nc" id="L39">    } catch (ProducerFencedException | OutOfOrderSequenceException | AuthorizationException e) {</span>
+      // We can't recover from these exceptions, so our only option is to close the producer and exit.
+      ;
+<span class="nc" id="L42">      producer.close();</span>
+<span class="nc" id="L43">    } catch (final KafkaException e) {</span>
+      // For all other exceptions, just abort the transaction and try again.
+
+<span class="nc" id="L46">      producer.abortTransaction();</span>
+<span class="nc" id="L47">    }</span>
+<span class="nc" id="L48">    producer.close();</span>
+<span class="nc" id="L49">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

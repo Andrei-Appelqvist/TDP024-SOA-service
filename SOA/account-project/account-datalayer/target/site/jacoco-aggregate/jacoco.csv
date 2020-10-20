@@ -1,0 +1,7 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+datalayer/xfinal-test,se.liu.ida.tdp024.account.util.logger,AccountLoggerMonlog,180,0,2,0,14,0,5,0,4,0
+datalayer/xfinal-test,se.liu.ida.tdp024.account.util.logger,KafkaObject,52,0,0,0,15,0,2,0,2,0
+datalayer/xfinal-test,se.liu.ida.tdp024.account.util.logger,AccountLoggerImpl,26,0,4,0,9,0,5,0,3,0
+datalayer/xfinal-test,se.liu.ida.tdp024.account.util.logger,AccountLogger.TodoLoggerLevel,84,0,0,0,9,0,1,0,1,0
+datalayer/xfinal-test,se.liu.ida.tdp024.account.util.json,AccountJsonSerializerImpl,57,0,0,0,17,0,3,0,3,0
+datalayer/xfinal-test,se.liu.ida.tdp024.account.util.http,HTTPHelperImpl,320,0,18,0,70,0,14,0,5,0

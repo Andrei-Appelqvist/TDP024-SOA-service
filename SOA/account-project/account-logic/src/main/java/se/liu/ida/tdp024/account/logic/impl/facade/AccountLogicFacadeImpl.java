@@ -10,6 +10,8 @@ import se.liu.ida.tdp024.account.util.json.AccountJsonSerializerImpl;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.util.*;
+import com.google.gson.Gson;
+import se.liu.ida.tdp024.account.data.api.entity.Account;
 
 public class AccountLogicFacadeImpl implements AccountLogicFacade {
 
@@ -50,8 +52,10 @@ public class AccountLogicFacadeImpl implements AccountLogicFacade {
 
     @Override
     public String findPerson(String person){
-      String accounts = accountEntityFacade.findAccounts(person);
-      return accounts;
+      List<Account> accounts = accountEntityFacade.findAccounts(person);
+      Gson gson = new Gson();
+      String strlst = gson.toJson(accounts);
+      return strlst;
     }
 
     @Override

@@ -5,6 +5,6 @@ import se.liu.ida.tdp024.account.data.api.entity.Transaction;
 
 
 public interface TransactionEntityFacade {
-  public void addTransaction(String type, long id, Integer amount, boolean status);
-  public String findTransactions(long id);
+  public boolean addTransaction(String type, long id, Integer amount, boolean status);
+  public List<Transaction> findTransactions(long id);
 }

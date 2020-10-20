@@ -33,9 +33,8 @@ public class AccountEntityFacadeDB implements AccountEntityFacade {
       acc.setPersonKey(personkey);
       acc.setAccountType(accounttype);
       acc.setHoldings(0);
+      acc.setBankKey(bankkey);
       em.persist(acc);
-      //em.flush();
-      //System.out.printf("¤¤%s¤¤", acc.getId());
       em.getTransaction().commit();
       return true;
     } catch(Exception e){
@@ -46,18 +45,16 @@ public class AccountEntityFacadeDB implements AccountEntityFacade {
   }
 
   @Override
-  public String findAccounts(String personkey){
+  public List<Account> findAccounts(String personkey){
     EntityManager em = EMF.getEntityManager();
+    List<Account> accounts = new ArrayList();
     try {
-      List<Account> accounts = new ArrayList();
       Query query = em.createQuery("SELECT c FROM AccountDB c WHERE c.personKey = :personkey");
       query.setParameter("personkey", personkey);
       accounts = query.getResultList();
-      Gson gson = new Gson();
-      String strlst = gson.toJson(accounts);
-      return strlst;
+      return accounts;
     } catch (Exception e){
-      return null;
+      return accounts;
     } finally{
       em.close();
     }
@@ -65,9 +62,17 @@ public class AccountEntityFacadeDB implements AccountEntityFacade {
 
   @Override
   public boolean debitAccount(long id, Integer amount){
+    if(amount < 0){
+      return false;
+    }
     EntityManager em = EMF.getEntityManager();
     em.getTransaction().begin();
     Account foundaccount = em.find(AccountDB.class, id, LockModeType.PESSIMISTIC_WRITE);
+    if(foundaccount == null){
+      em.getTransaction().commit();
+      em.close();
+      return false;
+    }
     boolean status = foundaccount.removeHoldings(amount);
     em.getTransaction().commit();
     em.close();
@@ -76,9 +81,18 @@ public class AccountEntityFacadeDB implements AccountEntityFacade {
 
   @Override
   public boolean creditAccount(long id, Integer amount){
+    //Logga:inget acc med id, insättning misslyckades, insättning lyckades
+    if(amount < 0){
+      return false;
+    }
     EntityManager em = EMF.getEntityManager();
     em.getTransaction().begin();
     Account foundaccount = em.find(AccountDB.class, id, LockModeType.PESSIMISTIC_WRITE);
+    if(foundaccount == null){
+      em.getTransaction().commit();
+      em.close();
+      return false;
+    }
     boolean status = foundaccount.addHoldings(amount);
     em.getTransaction().commit();
     em.close();
@@ -89,6 +103,7 @@ public class AccountEntityFacadeDB implements AccountEntityFacade {
   public Account getAccount(long id) {
     EntityManager em = EMF.getEntityManager();
     Account foundaccount = em.find(AccountDB.class, id);
+    em.close();
     return foundaccount;
   }
 
