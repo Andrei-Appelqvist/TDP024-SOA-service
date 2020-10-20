@@ -1,6 +1,6 @@
 ----------------------------------------------------------------
-Tue Oct 20 15:47:36 CEST 2020:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance a816c00e-0175-4643-e6d4-000008ae7bc0 
+Tue Oct 20 18:20:38 CEST 2020:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance a816c00e-0175-46cf-ffcb-000008a8da20 
 on database directory memory:/home/andrei-wsl/tdp024/git-repo-tdp024/SOA/account-project/account-logic/dataPU_embedded with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@2c13da15 
 Loaded from file:/home/andrei-wsl/.m2/repository/org/apache/derby/derby/10.14.2.0/derby-10.14.2.0.jar
 java.vendor=Ubuntu

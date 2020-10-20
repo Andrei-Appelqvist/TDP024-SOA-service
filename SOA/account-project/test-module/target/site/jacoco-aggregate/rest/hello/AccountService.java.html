@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AccountService.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">test-module</a> &gt; <a href="../index.html" class="el_bundle">rest</a> &gt; <a href="index.source.html" class="el_package">hello</a> &gt; <span class="el_source">AccountService.java</span></div><h1>AccountService.java</h1><pre class="source lang-java linenums">package hello;
+
+import java.util.concurrent.atomic.AtomicLong;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import se.liu.ida.tdp024.account.logic.api.facade.AccountLogicFacade;
+import se.liu.ida.tdp024.account.logic.api.facade.TransactionLogicFacade;
+import se.liu.ida.tdp024.account.logic.impl.facade.AccountLogicFacadeImpl;
+import se.liu.ida.tdp024.account.logic.impl.facade.TransactionLogicFacadeImpl;
+import se.liu.ida.tdp024.account.data.impl.db.facade.AccountEntityFacadeDB;
+import se.liu.ida.tdp024.account.data.impl.db.facade.TransactionEntityFacadeDB;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import java.util.ArrayList;
+import se.liu.ida.tdp024.account.util.json.AccountJsonSerializer;
+import se.liu.ida.tdp024.account.util.json.AccountJsonSerializerImpl;
+import se.liu.ida.tdp024.account.util.logger.KafkaObject;
+
+@RestController
+@RequestMapping(&quot;account-rest&quot;)
+<span class="fc" id="L22">public class AccountService {</span>
+
+<span class="fc" id="L24">  private final AccountLogicFacade accountlogicfacade = new AccountLogicFacadeImpl(new AccountEntityFacadeDB());</span>
+<span class="fc" id="L25">  private final TransactionLogicFacade transactionlogicfacade = new TransactionLogicFacadeImpl(new TransactionEntityFacadeDB());</span>
+<span class="fc" id="L26">  private static final AccountJsonSerializerImpl jsonSerializer = new AccountJsonSerializerImpl();</span>
+<span class="fc" id="L27">  private static final KafkaObject kafkaBitches = new KafkaObject();</span>
+
+  @RequestMapping(&quot;/account/create&quot;)
+  public String create(@RequestParam (required = false) String person,  @RequestParam (required = false) String bank, @RequestParam (required = false) String accounttype) {
+    //kafkaBitches.sendToKafka(&quot;error-events&quot;, &quot;Kafka Bitchez&quot;);
+<span class="fc bfc" id="L32" title="All 6 branches covered.">    if(person == null || bank==null ||accounttype==null){</span>
+<span class="fc" id="L33">      return &quot;FAILED&quot;;</span>
+    }
+<span class="fc" id="L35">    boolean status = accountlogicfacade.register(person, bank, accounttype);</span>
+    //System.out.printf(&quot;¤¤¤¤¤¤¤¤¤%s¤¤¤¤¤¤¤¤¤¤¤¤¤&quot;, status);
+<span class="fc bfc" id="L37" title="All 2 branches covered.">    if(status) {</span>
+<span class="fc" id="L38">      return &quot;OK&quot;;//new ResponseEntity(&quot;OK&quot;, HttpStatus.OK);</span>
+    }
+<span class="fc" id="L40">    return &quot;FAILED&quot;;//new ResponseEntity(&quot;FAILED&quot;, HttpStatus.NOT_ACC);</span>
+    //return String.format(&quot;Route called with %s&quot;, word);
+  }
+
+  @RequestMapping(&quot;/account/find/person&quot;)
+  public String findPerson(@RequestParam String person){
+<span class="fc" id="L46">    String person_list = accountlogicfacade.findPerson(person);</span>
+<span class="fc" id="L47">    return person_list;</span>
+  }
+
+  @RequestMapping(&quot;/account/debit&quot;)
+  public String debit(@RequestParam long id, @RequestParam Integer amount) {
+<span class="fc" id="L52">    boolean status = accountlogicfacade.debitAccount(id, amount);</span>
+<span class="fc" id="L53">    transactionlogicfacade.addTransaction(&quot;DEBIT&quot;, id, amount, status);</span>
+<span class="fc bfc" id="L54" title="All 2 branches covered.">    if(status){</span>
+<span class="fc" id="L55">      return &quot;OK&quot;;</span>
+
+    }
+<span class="fc" id="L58">    return &quot;FAILED&quot;;</span>
+
+  }
+
+  @RequestMapping(&quot;/account/credit&quot;)
+  public String credit(@RequestParam long id, @RequestParam Integer amount){
+<span class="fc" id="L64">    boolean status = accountlogicfacade.creditAccount(id, amount);</span>
+<span class="fc" id="L65">    transactionlogicfacade.addTransaction(&quot;CREDIT&quot;, id, amount, status);</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">    if(status)</span>
+    {
+<span class="fc" id="L68">      return &quot;OK&quot;;</span>
+    }
+<span class="fc" id="L70">    return &quot;FAILED&quot;;</span>
+  }
+
+  @RequestMapping(&quot;/account/transactions&quot;)
+  public String transactions(@RequestParam long id) {
+<span class="fc" id="L75">    String trans_list = transactionlogicfacade.getTransactions(id);</span>
+    //String json = jsonSerializer.toJson(trans_list);
+<span class="fc" id="L77">    return trans_list;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

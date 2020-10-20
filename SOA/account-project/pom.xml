@@ -10,6 +10,7 @@
       <module>account-logic</module>
       <module>account-rest</module>
       <module>account-xfinal-test</module>
+      <module>test-module</module>
  </modules>
     <dependencies>
               <!-- https://mvnrepository.com/artifact/org.apache.kafka/kafka-clients -->
@@ -24,34 +25,39 @@
             <artifactId>slf4j-simple</artifactId>
             <version>1.7.30</version>
         </dependency>
+        <dependency>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+          <version>4.12</version>
+          <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
-      <pluginManagement>
+
+     <pluginManagement>
         <plugins>
-        <plugin>
-            <groupId>org.jacoco</groupId>
+          <plugin>
+            <groupId>@project.groupId@</groupId>
             <artifactId>jacoco-maven-plugin</artifactId>
-            <version>0.8.5</version>
-            <executions>
-                <execution>
-                    <id>prepare-agent</id>
-                    <phase>initialize</phase>
-                    <goals>
-                        <goal>prepare-agent</goal>
-                    </goals>
-                </execution>
-                <execution>
-                    <id>report</id>
-                    <goals>
-                        <goal>report-aggregate</goal>
-                    </goals>
-                    <phase>verify</phase>
-                </execution>
-            </executions>
+            <version>@project.version@</version>
+          </plugin>
+        </plugins>
+      </pluginManagement>
+
+      <plugins>
+        <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>prepare-agent</id>
+              <goals>
+                <goal>prepare-agent</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
       </plugins>
-    </pluginManagement>
-
     </build>
 </project>

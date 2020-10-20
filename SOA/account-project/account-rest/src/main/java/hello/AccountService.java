@@ -42,9 +42,9 @@ public class AccountService {
   }
 
   @RequestMapping("/account/find/person")
-  public ResponseEntity findPerson(@RequestParam String person){
+  public String findPerson(@RequestParam String person){
     String person_list = accountlogicfacade.findPerson(person);
-    return new ResponseEntity(person_list, HttpStatus.OK);
+    return person_list;
   }
 
   @RequestMapping("/account/debit")
@@ -71,9 +71,9 @@ public class AccountService {
   }
 
   @RequestMapping("/account/transactions")
-  public ResponseEntity transactions(@RequestParam long id) {
+  public String transactions(@RequestParam long id) {
     String trans_list = transactionlogicfacade.getTransactions(id);
     //String json = jsonSerializer.toJson(trans_list);
-    return new ResponseEntity(trans_list, HttpStatus.OK);
+    return trans_list;
   }
 }
