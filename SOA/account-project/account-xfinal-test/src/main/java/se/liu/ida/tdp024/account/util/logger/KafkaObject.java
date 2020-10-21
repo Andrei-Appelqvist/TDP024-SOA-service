@@ -23,10 +23,17 @@ import org.apache.kafka.common.errors.OutOfOrderSequenceException;
 import org.apache.kafka.common.errors.ProducerFencedException;
 import org.apache.kafka.common.serialization.StringSerializer;
 import java.util.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 
 public class KafkaObject {
 
   public void sendToKafka(String channel , String message) {
+    SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    Date date = new Date(System.currentTimeMillis());
+    String datetime = formatter.format(date);
+
     Properties props = new Properties();
     props.put("bootstrap.servers", "localhost:9092");
     props.put("transactional.id", "my-transactional-id");
@@ -35,7 +42,7 @@ public class KafkaObject {
     try{
 
       producer.beginTransaction();
-      producer.send(new ProducerRecord<>(channel, "Can't find", message));
+      producer.send(new ProducerRecord<>(channel, "Can't find","["+datetime+"]"+message));
     } catch (ProducerFencedException | OutOfOrderSequenceException | AuthorizationException e) {
       // We can't recover from these exceptions, so our only option is to close the producer and exit.
       ;

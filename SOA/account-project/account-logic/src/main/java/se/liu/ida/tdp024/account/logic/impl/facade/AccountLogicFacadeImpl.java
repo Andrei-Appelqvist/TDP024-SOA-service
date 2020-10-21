@@ -24,13 +24,6 @@ public class AccountLogicFacadeImpl implements AccountLogicFacade {
         this.accountEntityFacade = accountEntityFacade;
     }
 
-
-
-    @Override
-    public String test() {
-        return accountEntityFacade.test();
-    }
-
     @Override
     public boolean register(String person, String bank, String accounttype){
       //Kolla om person finns mot Python API (PersonApi)

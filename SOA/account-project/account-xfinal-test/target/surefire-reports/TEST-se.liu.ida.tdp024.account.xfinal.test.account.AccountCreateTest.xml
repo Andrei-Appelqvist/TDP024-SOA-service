@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="3" failures="0" name="se.liu.ida.tdp024.account.xfinal.test.account.AccountCreateTest" time="6.629" errors="0" skipped="0">
+<testsuite tests="3" failures="0" name="se.liu.ida.tdp024.account.xfinal.test.account.AccountCreateTest" time="56.672" errors="0" skipped="0">
   <properties>
     <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
     <property name="java.vm.version" value="11.0.8+10-post-Ubuntu-0ubuntu120.04"/>
@@ -59,7 +59,7 @@
     <property name="sun.cpu.endian" value="little"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase classname="se.liu.ida.tdp024.account.xfinal.test.account.AccountCreateTest" name="createSuccessAllCombos" time="5.604"/>
-  <testcase classname="se.liu.ida.tdp024.account.xfinal.test.account.AccountCreateTest" name="createSuccess" time="0.565"/>
-  <testcase classname="se.liu.ida.tdp024.account.xfinal.test.account.AccountCreateTest" name="createFailure" time="0.46"/>
+  <testcase classname="se.liu.ida.tdp024.account.xfinal.test.account.AccountCreateTest" name="createSuccessAllCombos" time="46.289"/>
+  <testcase classname="se.liu.ida.tdp024.account.xfinal.test.account.AccountCreateTest" name="createSuccess" time="4.573"/>
+  <testcase classname="se.liu.ida.tdp024.account.xfinal.test.account.AccountCreateTest" name="createFailure" time="5.81"/>
 </testsuite>

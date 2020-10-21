@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="3" failures="0" name="se.liu.ida.tdp024.account.xfinal.test.account.TransactionTest" time="41.304" errors="0" skipped="0">
+<testsuite tests="3" failures="0" name="se.liu.ida.tdp024.account.xfinal.test.account.TransactionTest" time="58.917" errors="0" skipped="0">
   <properties>
     <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
     <property name="java.vm.version" value="11.0.8+10-post-Ubuntu-0ubuntu120.04"/>
@@ -59,7 +59,7 @@
     <property name="sun.cpu.endian" value="little"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase classname="se.liu.ida.tdp024.account.xfinal.test.account.TransactionTest" name="testFind" time="0.13"/>
-  <testcase classname="se.liu.ida.tdp024.account.xfinal.test.account.TransactionTest" name="testDebitConcurrency" time="20.678"/>
-  <testcase classname="se.liu.ida.tdp024.account.xfinal.test.account.TransactionTest" name="testCreditConcurrency" time="20.496"/>
+  <testcase classname="se.liu.ida.tdp024.account.xfinal.test.account.TransactionTest" name="testFind" time="4.133"/>
+  <testcase classname="se.liu.ida.tdp024.account.xfinal.test.account.TransactionTest" name="testDebitConcurrency" time="27.296"/>
+  <testcase classname="se.liu.ida.tdp024.account.xfinal.test.account.TransactionTest" name="testCreditConcurrency" time="27.488"/>
 </testsuite>

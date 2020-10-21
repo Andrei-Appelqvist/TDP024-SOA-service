@@ -3,9 +3,6 @@ import java.util.ArrayList;
 
 
 public interface AccountLogicFacade {
-
-    public String test();
-
     public boolean register(String accounttype,String person,String bank);
     public String findPerson(String person);
     public boolean debitAccount(long id, Integer amount);

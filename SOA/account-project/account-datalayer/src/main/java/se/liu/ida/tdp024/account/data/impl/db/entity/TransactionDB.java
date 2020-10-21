@@ -24,13 +24,6 @@ public class TransactionDB implements Transaction {
   private Account account;
 
 
-  public long getId(){
-    return id;
-  }
-
-  public void setId(long id){
-    this.id = id;
-  }
 
   public String getType(){
     return type;
@@ -46,10 +39,6 @@ public class TransactionDB implements Transaction {
 
   public void setAmount(Integer amount){
     this.amount = amount;
-  }
-
-  public String getCreated(){
-    return created;
   }
 
   public void setCreated(String created){

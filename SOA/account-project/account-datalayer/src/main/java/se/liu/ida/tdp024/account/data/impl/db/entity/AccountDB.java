@@ -24,20 +24,8 @@ public class AccountDB implements Account {
     return id;
   }
 
-  public void setId(long id) {
-    this.id = id;
-  }
-
-  public String getPersonKey(){
-      return personKey;
-  }
-
   public void setPersonKey(String personKey){
       this.personKey = personKey;
-  }
-
-  public String getAccountType(){
-    return accountType;
   }
 
   public void setAccountType(String accountType){

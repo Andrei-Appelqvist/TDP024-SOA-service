@@ -12,15 +12,19 @@ import java.util.List;
 import com.google.gson.Gson;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import se.liu.ida.tdp024.account.util.logger.KafkaObject;
 
 public class TransactionEntityFacadeDB implements TransactionEntityFacade {
+  private static final KafkaObject kafkaBitches = new KafkaObject();
 
   @Override
   public boolean addTransaction(String type, long id, Integer amount, boolean status){
+    kafkaBitches.sendToKafka("transaction-topic", "{DATA (transaction): Add transaction started.}");
     ArrayList<String> allowed = new ArrayList();
     allowed.add("CREDIT");
     allowed.add("DEBIT");
     if(!allowed.contains(type) || amount < 0){
+      kafkaBitches.sendToKafka("transaction-topic", "{DATA (transaction): Transaction type was not CREDIT or DEBIT}");
       return false;
     }
     Gson gson = new Gson();
@@ -34,6 +38,7 @@ public class TransactionEntityFacadeDB implements TransactionEntityFacade {
       if (acc == null)
       {
         em.getTransaction().commit();
+        kafkaBitches.sendToKafka("transaction-topic", "{DATA (transaction): Account could not be found }");
         return false;
       }
       String accjson = gson.toJson(acc);
@@ -48,10 +53,11 @@ public class TransactionEntityFacadeDB implements TransactionEntityFacade {
 
       em.persist(trans);
       em.getTransaction().commit();
+      kafkaBitches.sendToKafka("transaction-topic", "{DATA (transaction): Add transaction succesfull.}");
       return true;
     } catch(Exception e){
+      kafkaBitches.sendToKafka("transaction-topic", "{DATA (transaction): Something went wrong: "+e+"}");
       return false;
-      //Skriv grejer till KAfka
     } finally {
       em.close();
     }
@@ -60,11 +66,13 @@ public class TransactionEntityFacadeDB implements TransactionEntityFacade {
 
   @Override
   public List<Transaction> findTransactions(long id){
+    kafkaBitches.sendToKafka("transaction-topic", "{DATA (transaction): Find transactions started.}");
     List<Transaction> transactions = new ArrayList();
     EntityManager em = EMF.getEntityManager();
     Query query = em.createQuery("SELECT c FROM TransactionDB c WHERE c.account.id = :id");
     query.setParameter("id", id);
     transactions = query.getResultList();
+    kafkaBitches.sendToKafka("transaction-topic", "{DATA (transaction): Transactions succesfully returned.}");
     return transactions;
 
   }
