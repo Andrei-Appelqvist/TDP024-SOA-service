@@ -24,66 +24,66 @@ public class AccountService {
   private final AccountLogicFacade accountlogicfacade = new AccountLogicFacadeImpl(new AccountEntityFacadeDB());
   private final TransactionLogicFacade transactionlogicfacade = new TransactionLogicFacadeImpl(new TransactionEntityFacadeDB());
   private static final AccountJsonSerializerImpl jsonSerializer = new AccountJsonSerializerImpl();
-  private static final KafkaObject kafkaBitches = new KafkaObject();
+  private static final KafkaObject kafkaSender = new KafkaObject();
 
   @RequestMapping("/account/create")
   public String create(@RequestParam (required = false) String person,  @RequestParam (required = false) String bank, @RequestParam (required = false) String accounttype) {
-    kafkaBitches.sendToKafka("rest-topic", "{REST: Call to route create received}");
+    kafkaSender.sendToKafka("rest-topic", "{REST: Call to route create received}");
     if(person == null || bank==null ||accounttype==null){
-      kafkaBitches.sendToKafka("error-events", "{REST: Create failed, parameter missing or null}");
+      kafkaSender.sendToKafka("error-events", "{REST: Create failed, parameter missing or null}");
       return "FAILED";
     }
     boolean status = accountlogicfacade.register(person, bank, accounttype);
     if(status) {
-      kafkaBitches.sendToKafka("rest-topic", "{REST: Create was succesfull}");
+      kafkaSender.sendToKafka("rest-topic", "{REST: Create was succesfull}");
       return "OK";
     }
-    kafkaBitches.sendToKafka("rest-topic", "{REST: Create failed, incorrect parameter(s)}");
+    kafkaSender.sendToKafka("rest-topic", "{REST: Create failed, incorrect parameter(s)}");
     return "FAILED";
   }
 
   @RequestMapping("/account/find/person")
   public String findPerson(@RequestParam String person){
-    kafkaBitches.sendToKafka("rest-topic", "{REST: Call to route find received}");
+    kafkaSender.sendToKafka("rest-topic", "{REST: Call to route find received}");
     String person_list = accountlogicfacade.findPerson(person);
-    kafkaBitches.sendToKafka("rest-topic", "{REST: List of accounts served}");
+    kafkaSender.sendToKafka("rest-topic", "{REST: List of accounts served}");
     return person_list;
   }
 
   @RequestMapping("/account/debit")
   public String debit(@RequestParam long id, @RequestParam Integer amount) {
-    kafkaBitches.sendToKafka("rest-topic", "{REST: Call to route debit received}");
+    kafkaSender.sendToKafka("rest-topic", "{REST: Call to route debit received}");
     boolean status = accountlogicfacade.debitAccount(id, amount);
     transactionlogicfacade.addTransaction("DEBIT", id, amount, status);
     if(status){
-      kafkaBitches.sendToKafka("rest-topic", "{REST: Call to route debit. Debit was succesfull}");
+      kafkaSender.sendToKafka("rest-topic", "{REST: Call to route debit. Debit was succesfull}");
       return "OK";
 
     }
-    kafkaBitches.sendToKafka("rest-topic", "{REST: Call to route debit. Debit failed, parameters might be invalid}");
+    kafkaSender.sendToKafka("rest-topic", "{REST: Call to route debit. Debit failed, parameters might be invalid}");
     return "FAILED";
 
   }
 
   @RequestMapping("/account/credit")
   public String credit(@RequestParam long id, @RequestParam Integer amount){
-    kafkaBitches.sendToKafka("rest-topic", "{REST: Call to route credit received}");
+    kafkaSender.sendToKafka("rest-topic", "{REST: Call to route credit received}");
     boolean status = accountlogicfacade.creditAccount(id, amount);
     transactionlogicfacade.addTransaction("CREDIT", id, amount, status);
     if(status)
     {
-      kafkaBitches.sendToKafka("rest-topic", "{REST: Call to route credit. Credit was succesfull}");
+      kafkaSender.sendToKafka("rest-topic", "{REST: Call to route credit. Credit was succesfull}");
       return "OK";
     }
-    kafkaBitches.sendToKafka("rest-topic", "{REST: Call to route Credit. Credit failed, parameters might be invalid}");
+    kafkaSender.sendToKafka("rest-topic", "{REST: Call to route Credit. Credit failed, parameters might be invalid}");
     return "FAILED";
   }
 
   @RequestMapping("/account/transactions")
   public String transactions(@RequestParam long id) {
-    kafkaBitches.sendToKafka("rest-topic", "{REST: Call to route transactions received}");
+    kafkaSender.sendToKafka("rest-topic", "{REST: Call to route transactions received}");
     String trans_list = transactionlogicfacade.getTransactions(id);
-    kafkaBitches.sendToKafka("rest-topic", "{REST: List of transactions served}");
+    kafkaSender.sendToKafka("rest-topic", "{REST: List of transactions served}");
     return trans_list;
   }
 }

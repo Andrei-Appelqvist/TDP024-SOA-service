@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: se.liu.ida.tdp024.account.xfinal.test.account.TransactionTest
 -------------------------------------------------------------------------------
-Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 58.918 sec
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 58.112 sec
