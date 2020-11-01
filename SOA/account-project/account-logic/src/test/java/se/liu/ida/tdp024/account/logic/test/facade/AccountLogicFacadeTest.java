@@ -60,7 +60,7 @@ public class AccountLogicFacadeTest {
 
     @Test
     public void testFind(){
-      String correct = "[{\"id\":1,\"personKey\":\"3\",\"accountType\":\"CHECK\",\"bankKey\":\"4\",\"holdings\":0},{\"id\":2,\"personKey\":\"3\",\"accountType\":\"CHECK\",\"bankKey\":\"1\",\"holdings\":0},{\"id\":3,\"personKey\":\"3\",\"accountType\":\"SAVINGS\",\"bankKey\":\"2\",\"holdings\":0}]";
+      //String correct = "[{\"id\":1,\"personKey\":\"3\",\"accountType\":\"CHECK\",\"bankKey\":\"4\",\"holdings\":0},{\"id\":2,\"personKey\":\"3\",\"accountType\":\"CHECK\",\"bankKey\":\"1\",\"holdings\":0},{\"id\":3,\"personKey\":\"3\",\"accountType\":\"SAVINGS\",\"bankKey\":\"2\",\"holdings\":0}]";
       boolean reg = accountLogicFacade.register(person, bank, accounttype);
       Assert.assertEquals(reg, true);
       reg = accountLogicFacade.register(person, "SWEDBANK", accounttype);
@@ -68,8 +68,22 @@ public class AccountLogicFacadeTest {
       reg = accountLogicFacade.register(person, "IKANOBANKEN", "SAVINGS");
       Assert.assertEquals(reg, true);
 
-      String accounts = accountLogicFacade.findPerson("3");
-      Assert.assertEquals(accounts, correct);
+      List<Account> accounts = accountLogicFacade.findPerson("3");
+      Assert.assertEquals(accounts.get(0).getAccountType(), "CHECK");
+      Assert.assertEquals(accounts.get(0).getPersonKey(), "3");
+      Assert.assertEquals(accounts.get(0).getBankKey(), "4");
+      Assert.assertEquals((long)accounts.get(0).getHoldings(), 0);
+
+      Assert.assertEquals(accounts.get(1).getAccountType(), "CHECK");
+      Assert.assertEquals(accounts.get(1).getPersonKey(), "3");
+      Assert.assertEquals(accounts.get(1).getBankKey(), "1");
+      Assert.assertEquals((long)accounts.get(1).getHoldings(), 0);
+
+      Assert.assertEquals(accounts.get(2).getAccountType(), "SAVINGS");
+      Assert.assertEquals(accounts.get(2).getPersonKey(), "3");
+      Assert.assertEquals(accounts.get(2).getBankKey(), "2");
+      Assert.assertEquals((long)accounts.get(2).getHoldings(), 0);
+
     }
 
     @Test
@@ -84,9 +98,8 @@ public class AccountLogicFacadeTest {
       deb = accountLogicFacade.creditAccount(20, -1337);
       Assert.assertEquals(deb, false);
 
-      String accounts = accountLogicFacade.findPerson("3");
-      String holds = accounts.split("\"holdings\":")[1].split("}")[0];
-      Assert.assertEquals("1337", holds);
+      List<Account> accounts = accountLogicFacade.findPerson("3");
+      Assert.assertEquals((long)accounts.get(0).getHoldings(), 1337);
     }
 
     @Test
@@ -98,9 +111,10 @@ public class AccountLogicFacadeTest {
 
       deb = accountLogicFacade.debitAccount(1, 917);
       Assert.assertEquals(deb, true);
-      String accounts = accountLogicFacade.findPerson("3");
-      String holds = accounts.split("\"holdings\":")[1].split("}")[0];
-      Assert.assertEquals("420", holds);
+      List<Account> accounts = accountLogicFacade.findPerson("3");
+      Assert.assertEquals((long)accounts.get(0).getHoldings(), 420);
+      // String holds = accounts.split("\"holdings\":")[1].split("}")[0];
+      // Assert.assertEquals("420", holds);
 
       deb = accountLogicFacade.debitAccount(1, 500);
       Assert.assertEquals(deb, false);

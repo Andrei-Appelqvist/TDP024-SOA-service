@@ -10,6 +10,7 @@ import se.liu.ida.tdp024.account.logic.impl.facade.AccountLogicFacadeImpl;
 import org.junit.Assert;
 import se.liu.ida.tdp024.account.data.api.entity.Account;
 import se.liu.ida.tdp024.account.data.impl.db.entity.AccountDB;
+import se.liu.ida.tdp024.account.data.api.entity.Transaction;
 import se.liu.ida.tdp024.account.data.impl.db.facade.AccountEntityFacadeDB;
 import se.liu.ida.tdp024.account.data.api.facade.TransactionEntityFacade;
 import se.liu.ida.tdp024.account.data.impl.db.entity.TransactionDB;
@@ -58,13 +59,6 @@ public class TransactionLogicFacadeTest {
 
     @Test
     public void testGet() {
-      SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-      Date date = new Date(System.currentTimeMillis());
-      String datetime = formatter.format(date);
-      //Kommer faila om man kallar på den inom några ms från att minut ändras
-      //Sjukt låga odds men ändå. Bara att köra testet igen.
-
-      String correct = "[{\"id\":2,\"type\":\"CREDIT\",\"amount\":200,\"created\":\""+datetime+"\",\"status\":\"OK\",\"account\":{\"id\":1,\"personKey\":\"3\",\"accountType\":\"CHECK\",\"bankKey\":\"4\",\"holdings\":0}},{\"id\":3,\"type\":\"DEBIT\",\"amount\":200,\"created\":\""+datetime+"\",\"status\":\"OK\",\"account\":{\"id\":1,\"personKey\":\"3\",\"accountType\":\"CHECK\",\"bankKey\":\"4\",\"holdings\":0}},{\"id\":4,\"type\":\"DEBIT\",\"amount\":350,\"created\":\""+datetime+"\",\"status\":\"OK\",\"account\":{\"id\":1,\"personKey\":\"3\",\"accountType\":\"CHECK\",\"bankKey\":\"4\",\"holdings\":0}},{\"id\":5,\"type\":\"CREDIT\",\"amount\":322,\"created\":\""+datetime+"\",\"status\":\"FAILED\",\"account\":{\"id\":1,\"personKey\":\"3\",\"accountType\":\"CHECK\",\"bankKey\":\"4\",\"holdings\":0}}]";
       boolean reg = accountLogicFacade.register(person, bank, accounttype);
       Assert.assertEquals(reg, true);
       boolean add = transactionLogicFacade.addTransaction(type, id, amount, status);
@@ -76,7 +70,21 @@ public class TransactionLogicFacadeTest {
       add = transactionLogicFacade.addTransaction(type, id, 322, false);
       Assert.assertEquals(add, true);
 
-      String transactions = transactionLogicFacade.getTransactions(id);
-      //Assert.assertEquals(correct, transactions);
+      List<Transaction> transactions = transactionLogicFacade.getTransactions(id);
+      Assert.assertEquals(transactions.get(0).getType(), "CREDIT");
+      Assert.assertEquals(transactions.get(0).getStatus(), "OK");
+      Assert.assertEquals((long)transactions.get(0).getAmount(), 200);
+
+      Assert.assertEquals(transactions.get(1).getType(), "DEBIT");
+      Assert.assertEquals(transactions.get(1).getStatus(), "OK");
+      Assert.assertEquals((long)transactions.get(1).getAmount(), 200);
+
+      Assert.assertEquals(transactions.get(2).getType(), "DEBIT");
+      Assert.assertEquals(transactions.get(2).getStatus(), "OK");
+      Assert.assertEquals((long)transactions.get(2).getAmount(), 350);
+
+      Assert.assertEquals(transactions.get(3).getType(), "CREDIT");
+      Assert.assertEquals(transactions.get(3).getStatus(), "FAILED");
+      Assert.assertEquals((long)transactions.get(3).getAmount(), 322);
     }
 }

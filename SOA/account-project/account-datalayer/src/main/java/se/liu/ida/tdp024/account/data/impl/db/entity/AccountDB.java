@@ -28,8 +28,17 @@ public class AccountDB implements Account {
       this.personKey = personKey;
   }
 
+  public String getPersonKey(){
+      return personKey;
+  }
+
+
   public void setAccountType(String accountType){
     this.accountType = accountType;
+  }
+
+  public String getAccountType(){
+    return accountType;
   }
 
   public String getBankKey(){

@@ -10,17 +10,67 @@ import se.liu.ida.tdp024.account.data.api.util.StorageFacade;
 import se.liu.ida.tdp024.account.data.impl.db.util.StorageFacadeDB;
 import hello.AccountService;
 import org.springframework.http.ResponseEntity;
+import se.liu.ida.tdp024.account.util.json.AccountJsonSerializer;
+import se.liu.ida.tdp024.account.util.json.AccountJsonSerializerImpl;
+import test.util.AccountDTO;
+import test.util.TransactionDTO;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+//import se.liu.ida.tdp024.account.xfinal.test.util.AccountDTO;
+// import se.liu.ida.tdp024.account.xfinal.test.util.FinalConstants;
 
 public class AccountServiceTest {
     //--- Unit under test ---//
     public StorageFacade storageFacade = new StorageFacadeDB();
     private static final HTTPHelper httpHelper = new HTTPHelperImpl();
+    private static final AccountJsonSerializer jsonSerializer = new AccountJsonSerializerImpl();
     public AccountService accS = new AccountService();
-    String ENDPOINT = "http://localhost:8080/account-rest/";
+    //String ENDPOINT = "http://localhost:8080/account-rest/";
     public long id = 1;
-    public String first = "[{\"id\":1,\"personKey\":\"3\",\"accountType\":\"CHECK\",\"bankKey\":\"4\",\"holdings\":0}]";
-    public String afterCredit = "[{\"id\":1,\"personKey\":\"3\",\"accountType\":\"CHECK\",\"bankKey\":\"4\",\"holdings\":200}]";
-    public String afterDebit = "[{\"id\":1,\"personKey\":\"3\",\"accountType\":\"CHECK\",\"bankKey\":\"4\",\"holdings\":69}]";
+
+    public List<AccountDTO> accs(String bod){
+      AccountDTO[] accDTos = jsonSerializer.fromJson(bod, AccountDTO[].class);
+      List<AccountDTO> accounts = new ArrayList<AccountDTO>();
+      for (AccountDTO t : accDTos) {
+        accounts.add(t);
+      }
+      Collections.sort(accounts, new Comparator<AccountDTO>() {
+        @Override
+        public int compare(AccountDTO t, AccountDTO t1) {
+          if (t.getId() > t1.getId()) {
+            return 1;
+          } else if (t.getId() < t1.getId()) {
+            return -1;
+          } else {
+            return 0;
+          }
+        }
+      });
+      return accounts;
+    }
+
+    public List<TransactionDTO> transacts(String bod){
+      TransactionDTO[] transDTos = jsonSerializer.fromJson(bod, TransactionDTO[].class);
+      List<TransactionDTO> transactions = new ArrayList<TransactionDTO>();
+      for (TransactionDTO t : transDTos) {
+        transactions.add(t);
+      }
+      Collections.sort(transactions, new Comparator<TransactionDTO>() {
+        @Override
+        public int compare(TransactionDTO t, TransactionDTO t1) {
+          if (t.getId() > t1.getId()) {
+            return 1;
+          } else if (t.getId() < t1.getId()) {
+            return -1;
+          } else {
+            return 0;
+          }
+        }
+      });
+      return transactions;
+    }
 
     @Before
     public void tearDown() {
@@ -47,17 +97,25 @@ public class AccountServiceTest {
       res = accS.create("3", "NORDEA", "MONEYLAUNDERING");
       Assert.assertEquals("FAILED", res);
     }
-    //
+
+
     @Test
     public void test2(){
       ////////////TEST_FIND///////////
       System.out.println("TWO");
       String res = accS.create("3", "NORDEA", "CHECK");
       Assert.assertEquals(res, "OK");
-      res = accS.findPerson("3");
-      Assert.assertEquals(res, first);
-      res = accS.findPerson("27");
-      Assert.assertEquals("[]", res);
+      ResponseEntity<String> rss = accS.findPerson("3");
+      String bod = rss.getBody();
+      List<AccountDTO> accounts = accs(bod);
+      Assert.assertEquals(accounts.get(0).getId(), 1);
+      Assert.assertEquals(accounts.get(0).getAccountType(), "CHECK");
+      Assert.assertEquals(accounts.get(0).getBankKey(), "4");
+      Assert.assertEquals((long)accounts.get(0).getHoldings(), 0);
+
+
+      String respBody = accS.findPerson("27").getBody();
+      Assert.assertEquals("[]", respBody);
     }
 
 
@@ -66,12 +124,26 @@ public class AccountServiceTest {
       ////////////TEST_CREDIT///////////
       String res = accS.create("3", "NORDEA", "CHECK");
       Assert.assertEquals(res, "OK");
-      res = accS.findPerson("3");
-      Assert.assertEquals(res, first);
+      ResponseEntity<String> rss = accS.findPerson("3");
+      String bod = rss.getBody();
+      List<AccountDTO> accounts = accs(bod);
+
+      Assert.assertEquals(accounts.get(0).getId(), 1);
+      Assert.assertEquals(accounts.get(0).getAccountType(), "CHECK");
+      Assert.assertEquals(accounts.get(0).getBankKey(), "4");
+      Assert.assertEquals((long)accounts.get(0).getHoldings(), 0);
+
       res = accS.credit(1, 200);
       Assert.assertEquals(res, "OK");
-      res = accS.findPerson("3");
-      Assert.assertEquals(res, afterCredit);
+
+      rss = accS.findPerson("3");
+      bod = rss.getBody();
+      accounts = accs(bod);
+
+      Assert.assertEquals(accounts.get(0).getId(), 1);
+      Assert.assertEquals(accounts.get(0).getAccountType(), "CHECK");
+      Assert.assertEquals(accounts.get(0).getBankKey(), "4");
+      Assert.assertEquals((long)accounts.get(0).getHoldings(), 200);
 
       res = accS.credit(1, -22);
       Assert.assertEquals(res, "FAILED");
@@ -80,23 +152,44 @@ public class AccountServiceTest {
       Assert.assertEquals(res, "FAILED");
     }
 
-
     @Test
     public void test4(){
       ////////////TEST_DEBIT///////////
       String res = accS.create("3", "NORDEA", "CHECK");
       Assert.assertEquals(res, "OK");
-      res = accS.findPerson("3");
-      Assert.assertEquals(res, first);
+
+      ResponseEntity<String> rss = accS.findPerson("3");
+      String bod = rss.getBody();
+      List<AccountDTO> accounts = accs(bod);
+
+      Assert.assertEquals(accounts.get(0).getId(), 1);
+      Assert.assertEquals(accounts.get(0).getAccountType(), "CHECK");
+      Assert.assertEquals(accounts.get(0).getBankKey(), "4");
+      Assert.assertEquals((long)accounts.get(0).getHoldings(), 0);
+
       res = accS.credit(1, 200);
       Assert.assertEquals(res, "OK");
-      res = accS.findPerson("3");
-      Assert.assertEquals(res, afterCredit);
+
+      rss = accS.findPerson("3");
+      bod = rss.getBody();
+      accounts = accs(bod);
+
+      Assert.assertEquals(accounts.get(0).getId(), 1);
+      Assert.assertEquals(accounts.get(0).getAccountType(), "CHECK");
+      Assert.assertEquals(accounts.get(0).getBankKey(), "4");
+      Assert.assertEquals((long)accounts.get(0).getHoldings(), 200);
 
       res = accS.debit(1, 131);
       Assert.assertEquals(res, "OK");
-      res = accS.findPerson("3");
-      Assert.assertEquals(res, afterDebit);
+
+      rss = accS.findPerson("3");
+      bod = rss.getBody();
+      accounts = accs(bod);
+
+      Assert.assertEquals(accounts.get(0).getId(), 1);
+      Assert.assertEquals(accounts.get(0).getAccountType(), "CHECK");
+      Assert.assertEquals(accounts.get(0).getBankKey(), "4");
+      Assert.assertEquals((long)accounts.get(0).getHoldings(), 69);
 
       res = accS.debit(1, -22);
       Assert.assertEquals(res, "FAILED");
@@ -113,6 +206,12 @@ public class AccountServiceTest {
     public void test5(){
       String res = accS.create("3", "NORDEA", "CHECK");
       Assert.assertEquals(res, "OK");
+
+      ResponseEntity<String> rss = accS.findPerson("3");
+      String bod = rss.getBody();
+      List<AccountDTO> accounts = accs(bod);
+      AccountDTO accountDTO = accounts.get(0);
+
       res = accS.credit(1, 200);
       Assert.assertEquals(res, "OK");
       res = accS.debit(1, 131);
@@ -120,14 +219,32 @@ public class AccountServiceTest {
       res = accS.debit(1, 70);
       Assert.assertEquals(res, "FAILED");
 
-      String correct = "[{\"id\":2,\"type\":\"CREDIT\",\"amount\":200,\"created\":\"2020-10-20 18:17:57\",\"status\":\"OK\",\"account\":{\"id\":1,\"personKey\":\"3\",\"accountType\":\"CHECK\",\"bankKey\":\"4\",\"holdings\":69}},{\"id\":3,\"type\":\"DEBIT\",\"amount\":131,\"created\":\"2020-10-20 18:17:57\",\"status\":\"OK\",\"account\":{\"id\":1,\"personKey\":\"3\",\"accountType\":\"CHECK\",\"bankKey\":\"4\",\"holdings\":69}},{\"id\":4,\"type\":\"DEBIT\",\"amount\":70,\"created\":\"2020-10-20 18:17:57\",\"status\":\"FAILED\",\"account\":{\"id\":1,\"personKey\":\"3\",\"accountType\":\"CHECK\",\"bankKey\":\"4\",\"holdings\":69}}]";
 
-      String pattern = "[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1]) (0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])";
-      res = accS.transactions(1);
-      Assert.assertEquals(correct.replaceAll(pattern, "time"), res.replaceAll(pattern, "time"));
+      rss = accS.transactions(1);
+      bod = rss.getBody();
+      List<TransactionDTO> transactions = transacts(bod);
 
-      res = accS.transactions(42);
-      Assert.assertEquals(res, "[]");
+      Assert.assertEquals(transactions.get(0).getId(), 2);
+      Assert.assertEquals(transactions.get(0).getType(), "CREDIT");
+      Assert.assertEquals((long)transactions.get(0).getAmount(), 200);
+      Assert.assertNotNull(transactions.get(0).getCreated());
+      Assert.assertEquals(transactions.get(0).getStatus(), "OK");
+
+      Assert.assertEquals(transactions.get(1).getId(), 3);
+      Assert.assertEquals(transactions.get(1).getType(), "DEBIT");
+      Assert.assertEquals((long)transactions.get(1).getAmount(), 131);
+      Assert.assertNotNull(transactions.get(1).getCreated());
+      Assert.assertEquals(transactions.get(1).getStatus(), "OK");
+
+      Assert.assertEquals(transactions.get(2).getId(), 4);
+      Assert.assertEquals(transactions.get(2).getType(), "DEBIT");
+      Assert.assertEquals((long)transactions.get(2).getAmount(), 70);
+      Assert.assertNotNull(transactions.get(2).getCreated());
+      Assert.assertEquals(transactions.get(2).getStatus(), "FAILED");
+
+      rss = accS.transactions(42);
+      bod = rss.getBody();
+      Assert.assertEquals(bod, "[]");
 
     }
 

@@ -1,1 +1,5 @@
 test/hello/AccountServiceTest.class
+test/hello/AccountServiceTest$1.class
+test/hello/AccountServiceTest$2.class
+test/util/AccountDTO.class
+test/util/TransactionDTO.class

@@ -4,6 +4,7 @@ import se.liu.ida.tdp024.account.data.api.facade.AccountEntityFacade;
 import se.liu.ida.tdp024.account.data.api.entity.Account;
 import se.liu.ida.tdp024.account.data.impl.db.util.EMF;
 import se.liu.ida.tdp024.account.data.impl.db.entity.AccountDB;
+import se.liu.ida.tdp024.account.data.impl.db.entity.TransactionDB;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.util.List;
@@ -14,7 +15,14 @@ import se.liu.ida.tdp024.account.util.logger.KafkaObject;
 
 
 public class AccountEntityFacadeDB implements AccountEntityFacade {
-    private static final KafkaObject kafkaSender = new KafkaObject();
+
+  private static final KafkaObject kafkaSender = new KafkaObject();
+  // private TransactionEntityFacadeDB transactionEntityFacadeDB;
+  //
+  // public AccountEntityFacadeDB(TransactionEntityFacadeDB tef){
+  //   transactionEntityFacadeDB = tef;
+  // }
+
 
   @Override
   public boolean create(String accounttype, String personkey, String bankkey){
@@ -40,6 +48,9 @@ public class AccountEntityFacadeDB implements AccountEntityFacade {
       return true;
     } catch(Exception e){
       kafkaSender.sendToKafka("transaction-topic", "{DATA (account): Something went wrong: "+e+"}");
+      if(em.getTransaction().isActive()){
+        em.getTransaction().rollback();
+      }
       return false;
     } finally {
       em.close();
@@ -82,6 +93,8 @@ public class AccountEntityFacadeDB implements AccountEntityFacade {
       return false;
     }
     boolean status = foundaccount.removeHoldings(amount);
+
+    //boolean transStatus = transactionEntityFacadeDB.addTransaction("DEBIT", id, amount, status);
     em.getTransaction().commit();
     em.close();
     //kafkaSender.sendToKafka("error-events", "{DATA (account): Debit was succesfull.}");
@@ -105,6 +118,7 @@ public class AccountEntityFacadeDB implements AccountEntityFacade {
       return false;
     }
     boolean status = foundaccount.addHoldings(amount);
+    //boolean transStatus = transactionEntityFacadeDB.addTransaction("DEBIT", id, amount, status);
     em.getTransaction().commit();
     em.close();
     //kafkaSender.sendToKafka("error-events", "{DATA (account): Credit was succesfull. Adding given amount to account}");

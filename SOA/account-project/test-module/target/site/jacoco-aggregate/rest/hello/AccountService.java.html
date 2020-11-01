@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AccountService.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">test-module</a> &gt; <a href="../index.html" class="el_bundle">rest</a> &gt; <a href="index.source.html" class="el_package">hello</a> &gt; <span class="el_source">AccountService.java</span></div><h1>AccountService.java</h1><pre class="source lang-java linenums">package hello;
-
+import se.liu.ida.tdp024.account.data.api.entity.Transaction;
 import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,75 +16,87 @@ import java.util.ArrayList;
 import se.liu.ida.tdp024.account.util.json.AccountJsonSerializer;
 import se.liu.ida.tdp024.account.util.json.AccountJsonSerializerImpl;
 import se.liu.ida.tdp024.account.util.logger.KafkaObject;
+import com.google.gson.Gson;
+import java.util.*;
+import se.liu.ida.tdp024.account.data.api.entity.Account;
+
 
 @RestController
 @RequestMapping(&quot;account-rest&quot;)
-<span class="fc" id="L22">public class AccountService {</span>
-
-<span class="fc" id="L24">  private final AccountLogicFacade accountlogicfacade = new AccountLogicFacadeImpl(new AccountEntityFacadeDB());</span>
-<span class="fc" id="L25">  private final TransactionLogicFacade transactionlogicfacade = new TransactionLogicFacadeImpl(new TransactionEntityFacadeDB());</span>
-<span class="fc" id="L26">  private static final AccountJsonSerializerImpl jsonSerializer = new AccountJsonSerializerImpl();</span>
-<span class="fc" id="L27">  private static final KafkaObject kafkaSender = new KafkaObject();</span>
+<span class="nc" id="L26">public class AccountService {</span>
+<span class="nc" id="L27">  private final TransactionEntityFacadeDB transFacadeDb = new TransactionEntityFacadeDB();</span>
+  //private final TransactionLogicFacade transactionlogicfacade = new TransactionLogicFacadeImpl();
+<span class="nc" id="L29">  private final TransactionLogicFacade transactionlogicfacade = new TransactionLogicFacadeImpl(transFacadeDb);</span>
+<span class="nc" id="L30">  private final AccountLogicFacade accountlogicfacade = new AccountLogicFacadeImpl(new AccountEntityFacadeDB());</span>
+  //private final AccountLogicFacade accountlogicfacade = new AccountLogicFacadeImpl(new AccountEntityFacadeDB(transFacadeDb));
+<span class="nc" id="L32">  private static final AccountJsonSerializerImpl jsonSerializer = new AccountJsonSerializerImpl();</span>
+<span class="nc" id="L33">  private static final KafkaObject kafkaSender = new KafkaObject();</span>
 
   @RequestMapping(&quot;/account/create&quot;)
   public String create(@RequestParam (required = false) String person,  @RequestParam (required = false) String bank, @RequestParam (required = false) String accounttype) {
-<span class="fc" id="L31">    kafkaSender.sendToKafka(&quot;rest-topic&quot;, &quot;{REST: Call to route create received}&quot;);</span>
-<span class="fc bfc" id="L32" title="All 6 branches covered.">    if(person == null || bank==null ||accounttype==null){</span>
-<span class="fc" id="L33">      kafkaSender.sendToKafka(&quot;error-events&quot;, &quot;{REST: Create failed, parameter missing or null}&quot;);</span>
-<span class="fc" id="L34">      return &quot;FAILED&quot;;</span>
+<span class="nc" id="L37">    kafkaSender.sendToKafka(&quot;rest-topic&quot;, &quot;{REST: Call to route create received}&quot;);</span>
+<span class="nc bnc" id="L38" title="All 6 branches missed.">    if(person == null || bank==null ||accounttype==null){</span>
+<span class="nc" id="L39">      kafkaSender.sendToKafka(&quot;error-events&quot;, &quot;{REST: Create failed, parameter missing or null}&quot;);</span>
+<span class="nc" id="L40">      return &quot;FAILED&quot;;</span>
     }
-<span class="fc" id="L36">    boolean status = accountlogicfacade.register(person, bank, accounttype);</span>
-<span class="fc bfc" id="L37" title="All 2 branches covered.">    if(status) {</span>
-<span class="fc" id="L38">      kafkaSender.sendToKafka(&quot;rest-topic&quot;, &quot;{REST: Create was succesfull}&quot;);</span>
-<span class="fc" id="L39">      return &quot;OK&quot;;</span>
+<span class="nc" id="L42">    boolean status = accountlogicfacade.register(person, bank, accounttype);</span>
+<span class="nc bnc" id="L43" title="All 2 branches missed.">    if(status) {</span>
+<span class="nc" id="L44">      kafkaSender.sendToKafka(&quot;rest-topic&quot;, &quot;{REST: Create was succesfull}&quot;);</span>
+<span class="nc" id="L45">      return &quot;OK&quot;;</span>
     }
-<span class="fc" id="L41">    kafkaSender.sendToKafka(&quot;rest-topic&quot;, &quot;{REST: Create failed, incorrect parameter(s)}&quot;);</span>
-<span class="fc" id="L42">    return &quot;FAILED&quot;;</span>
+<span class="nc" id="L47">    kafkaSender.sendToKafka(&quot;rest-topic&quot;, &quot;{REST: Create failed, incorrect parameter(s)}&quot;);</span>
+<span class="nc" id="L48">    return &quot;FAILED&quot;;</span>
   }
 
   @RequestMapping(&quot;/account/find/person&quot;)
-  public String findPerson(@RequestParam String person){
-<span class="fc" id="L47">    kafkaSender.sendToKafka(&quot;rest-topic&quot;, &quot;{REST: Call to route find received}&quot;);</span>
-<span class="fc" id="L48">    String person_list = accountlogicfacade.findPerson(person);</span>
-<span class="fc" id="L49">    kafkaSender.sendToKafka(&quot;rest-topic&quot;, &quot;{REST: List of accounts served}&quot;);</span>
-<span class="fc" id="L50">    return person_list;</span>
+  public ResponseEntity&lt;String&gt; findPerson(@RequestParam String person){
+<span class="nc" id="L53">    kafkaSender.sendToKafka(&quot;rest-topic&quot;, &quot;{REST: Call to route find received}&quot;);</span>
+<span class="nc" id="L54">    List&lt;Account&gt; person_list = accountlogicfacade.findPerson(person);</span>
+<span class="nc" id="L55">    Gson gson = new Gson();</span>
+<span class="nc" id="L56">    String strlst = gson.toJson(person_list);</span>
+<span class="nc" id="L57">    kafkaSender.sendToKafka(&quot;rest-topic&quot;, &quot;{REST: List of accounts served}&quot;);</span>
+    //return strlst;
+<span class="nc" id="L59">    return new ResponseEntity(strlst, HttpStatus.OK);</span>
   }
 
   @RequestMapping(&quot;/account/debit&quot;)
   public String debit(@RequestParam long id, @RequestParam Integer amount) {
-<span class="fc" id="L55">    kafkaSender.sendToKafka(&quot;rest-topic&quot;, &quot;{REST: Call to route debit received}&quot;);</span>
-<span class="fc" id="L56">    boolean status = accountlogicfacade.debitAccount(id, amount);</span>
-<span class="fc" id="L57">    transactionlogicfacade.addTransaction(&quot;DEBIT&quot;, id, amount, status);</span>
-<span class="fc bfc" id="L58" title="All 2 branches covered.">    if(status){</span>
-<span class="fc" id="L59">      kafkaSender.sendToKafka(&quot;rest-topic&quot;, &quot;{REST: Call to route debit. Debit was succesfull}&quot;);</span>
-<span class="fc" id="L60">      return &quot;OK&quot;;</span>
+<span class="nc" id="L64">    kafkaSender.sendToKafka(&quot;rest-topic&quot;, &quot;{REST: Call to route debit received}&quot;);</span>
+<span class="nc" id="L65">    boolean status = accountlogicfacade.debitAccount(id, amount);</span>
+<span class="nc" id="L66">    transactionlogicfacade.addTransaction(&quot;DEBIT&quot;, id, amount, status);</span>
+<span class="nc bnc" id="L67" title="All 2 branches missed.">    if(status){</span>
+<span class="nc" id="L68">      kafkaSender.sendToKafka(&quot;rest-topic&quot;, &quot;{REST: Call to route debit. Debit was succesfull}&quot;);</span>
+<span class="nc" id="L69">      return &quot;OK&quot;;</span>
 
     }
-<span class="fc" id="L63">    kafkaSender.sendToKafka(&quot;rest-topic&quot;, &quot;{REST: Call to route debit. Debit failed, parameters might be invalid}&quot;);</span>
-<span class="fc" id="L64">    return &quot;FAILED&quot;;</span>
+<span class="nc" id="L72">    kafkaSender.sendToKafka(&quot;rest-topic&quot;, &quot;{REST: Call to route debit. Debit failed, parameters might be invalid}&quot;);</span>
+<span class="nc" id="L73">    return &quot;FAILED&quot;;</span>
 
   }
 
   @RequestMapping(&quot;/account/credit&quot;)
   public String credit(@RequestParam long id, @RequestParam Integer amount){
-<span class="fc" id="L70">    kafkaSender.sendToKafka(&quot;rest-topic&quot;, &quot;{REST: Call to route credit received}&quot;);</span>
-<span class="fc" id="L71">    boolean status = accountlogicfacade.creditAccount(id, amount);</span>
-<span class="fc" id="L72">    transactionlogicfacade.addTransaction(&quot;CREDIT&quot;, id, amount, status);</span>
-<span class="fc bfc" id="L73" title="All 2 branches covered.">    if(status)</span>
+<span class="nc" id="L79">    kafkaSender.sendToKafka(&quot;rest-topic&quot;, &quot;{REST: Call to route credit received}&quot;);</span>
+<span class="nc" id="L80">    boolean status = accountlogicfacade.creditAccount(id, amount);</span>
+<span class="nc" id="L81">    transactionlogicfacade.addTransaction(&quot;CREDIT&quot;, id, amount, status);</span>
+<span class="nc bnc" id="L82" title="All 2 branches missed.">    if(status)</span>
     {
-<span class="fc" id="L75">      kafkaSender.sendToKafka(&quot;rest-topic&quot;, &quot;{REST: Call to route credit. Credit was succesfull}&quot;);</span>
-<span class="fc" id="L76">      return &quot;OK&quot;;</span>
+<span class="nc" id="L84">      kafkaSender.sendToKafka(&quot;rest-topic&quot;, &quot;{REST: Call to route credit. Credit was succesfull}&quot;);</span>
+<span class="nc" id="L85">      return &quot;OK&quot;;</span>
     }
-<span class="fc" id="L78">    kafkaSender.sendToKafka(&quot;rest-topic&quot;, &quot;{REST: Call to route Credit. Credit failed, parameters might be invalid}&quot;);</span>
-<span class="fc" id="L79">    return &quot;FAILED&quot;;</span>
+<span class="nc" id="L87">    kafkaSender.sendToKafka(&quot;rest-topic&quot;, &quot;{REST: Call to route Credit. Credit failed, parameters might be invalid}&quot;);</span>
+<span class="nc" id="L88">    return &quot;FAILED&quot;;</span>
   }
 
   @RequestMapping(&quot;/account/transactions&quot;)
-  public String transactions(@RequestParam long id) {
-<span class="fc" id="L84">    kafkaSender.sendToKafka(&quot;rest-topic&quot;, &quot;{REST: Call to route transactions received}&quot;);</span>
-<span class="fc" id="L85">    String trans_list = transactionlogicfacade.getTransactions(id);</span>
-<span class="fc" id="L86">    kafkaSender.sendToKafka(&quot;rest-topic&quot;, &quot;{REST: List of transactions served}&quot;);</span>
-<span class="fc" id="L87">    return trans_list;</span>
+  public ResponseEntity transactions(@RequestParam long id) {
+<span class="nc" id="L93">    kafkaSender.sendToKafka(&quot;rest-topic&quot;, &quot;{REST: Call to route transactions received}&quot;);</span>
+<span class="nc" id="L94">    List&lt;Transaction&gt; trans_list = transactionlogicfacade.getTransactions(id);</span>
+<span class="nc" id="L95">    kafkaSender.sendToKafka(&quot;rest-topic&quot;, &quot;{REST: List of transactions served}&quot;);</span>
+<span class="nc" id="L96">    Gson gson = new Gson();</span>
+<span class="nc" id="L97">    String strlst = gson.toJson(trans_list);</span>
+    // return trans_list;
+<span class="nc" id="L99">    return new ResponseEntity(strlst, HttpStatus.OK);</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

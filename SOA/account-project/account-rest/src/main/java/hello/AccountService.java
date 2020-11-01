@@ -1,5 +1,5 @@
 package hello;
-
+import se.liu.ida.tdp024.account.data.api.entity.Transaction;
 import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,13 +16,19 @@ import java.util.ArrayList;
 import se.liu.ida.tdp024.account.util.json.AccountJsonSerializer;
 import se.liu.ida.tdp024.account.util.json.AccountJsonSerializerImpl;
 import se.liu.ida.tdp024.account.util.logger.KafkaObject;
+import com.google.gson.Gson;
+import java.util.*;
+import se.liu.ida.tdp024.account.data.api.entity.Account;
+
 
 @RestController
 @RequestMapping("account-rest")
 public class AccountService {
-
+  private final TransactionEntityFacadeDB transFacadeDb = new TransactionEntityFacadeDB();
+  //private final TransactionLogicFacade transactionlogicfacade = new TransactionLogicFacadeImpl();
+  private final TransactionLogicFacade transactionlogicfacade = new TransactionLogicFacadeImpl(transFacadeDb);
   private final AccountLogicFacade accountlogicfacade = new AccountLogicFacadeImpl(new AccountEntityFacadeDB());
-  private final TransactionLogicFacade transactionlogicfacade = new TransactionLogicFacadeImpl(new TransactionEntityFacadeDB());
+  //private final AccountLogicFacade accountlogicfacade = new AccountLogicFacadeImpl(new AccountEntityFacadeDB(transFacadeDb));
   private static final AccountJsonSerializerImpl jsonSerializer = new AccountJsonSerializerImpl();
   private static final KafkaObject kafkaSender = new KafkaObject();
 
@@ -43,11 +49,14 @@ public class AccountService {
   }
 
   @RequestMapping("/account/find/person")
-  public String findPerson(@RequestParam String person){
+  public ResponseEntity<String> findPerson(@RequestParam String person){
     kafkaSender.sendToKafka("rest-topic", "{REST: Call to route find received}");
-    String person_list = accountlogicfacade.findPerson(person);
+    List<Account> person_list = accountlogicfacade.findPerson(person);
+    Gson gson = new Gson();
+    String strlst = gson.toJson(person_list);
     kafkaSender.sendToKafka("rest-topic", "{REST: List of accounts served}");
-    return person_list;
+    //return strlst;
+    return new ResponseEntity(strlst, HttpStatus.OK);
   }
 
   @RequestMapping("/account/debit")
@@ -80,10 +89,13 @@ public class AccountService {
   }
 
   @RequestMapping("/account/transactions")
-  public String transactions(@RequestParam long id) {
+  public ResponseEntity transactions(@RequestParam long id) {
     kafkaSender.sendToKafka("rest-topic", "{REST: Call to route transactions received}");
-    String trans_list = transactionlogicfacade.getTransactions(id);
+    List<Transaction> trans_list = transactionlogicfacade.getTransactions(id);
     kafkaSender.sendToKafka("rest-topic", "{REST: List of transactions served}");
-    return trans_list;
+    Gson gson = new Gson();
+    String strlst = gson.toJson(trans_list);
+    // return trans_list;
+    return new ResponseEntity(strlst, HttpStatus.OK);
   }
 }

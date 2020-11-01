@@ -7,6 +7,8 @@ import se.liu.ida.tdp024.account.data.api.facade.AccountEntityFacade;
 import se.liu.ida.tdp024.account.data.api.entity.Account;
 import se.liu.ida.tdp024.account.data.impl.db.entity.AccountDB;
 import se.liu.ida.tdp024.account.data.impl.db.facade.AccountEntityFacadeDB;
+import se.liu.ida.tdp024.account.data.impl.db.entity.TransactionDB;
+import se.liu.ida.tdp024.account.data.impl.db.facade.TransactionEntityFacadeDB;
 import se.liu.ida.tdp024.account.data.api.util.StorageFacade;
 import se.liu.ida.tdp024.account.data.impl.db.util.StorageFacadeDB;
 import java.util.List;
@@ -16,7 +18,9 @@ import se.liu.ida.tdp024.account.util.json.AccountJsonSerializerImpl;
 public class AccountEntityFacadeTest {
 
     //---- Unit under test ----//
+    //private TransactionEntityFacadeDB transFacadeDb = new TransactionEntityFacadeDB();
     private AccountEntityFacade accountEntityFacade = new AccountEntityFacadeDB();
+    //private AccountEntityFacade accountEntityFacade = new AccountEntityFacadeDB(transFacadeDb);
     private StorageFacade storageFacade = new StorageFacadeDB();
     public String accounttype = "CHECK";
     public String personkey = "3";

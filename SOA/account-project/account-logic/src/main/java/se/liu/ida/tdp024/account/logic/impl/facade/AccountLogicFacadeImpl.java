@@ -44,11 +44,11 @@ public class AccountLogicFacadeImpl implements AccountLogicFacade {
     }
 
     @Override
-    public String findPerson(String person){
+    public List<Account> findPerson(String person){
       List<Account> accounts = accountEntityFacade.findAccounts(person);
-      Gson gson = new Gson();
-      String strlst = gson.toJson(accounts);
-      return strlst;
+      // Gson gson = new Gson();
+      // String strlst = gson.toJson(accounts);
+      return accounts;
     }
 
     @Override

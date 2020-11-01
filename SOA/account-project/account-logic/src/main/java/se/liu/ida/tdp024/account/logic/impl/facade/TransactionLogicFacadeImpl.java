@@ -32,11 +32,9 @@ public class TransactionLogicFacadeImpl implements TransactionLogicFacade {
   }
 
   @Override
-  public String getTransactions(long id){
+  public List<Transaction> getTransactions(long id){
     List<Transaction> asdf = transactionEntityFacade.findTransactions(id);
-    Gson gson = new Gson();
-    String strlst = gson.toJson(asdf);
-    return strlst;
+    return asdf;
   }
 
 }

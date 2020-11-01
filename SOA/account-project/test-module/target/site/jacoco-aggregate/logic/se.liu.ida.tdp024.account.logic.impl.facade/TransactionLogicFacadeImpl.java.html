@@ -19,24 +19,22 @@ public class TransactionLogicFacadeImpl implements TransactionLogicFacade {
 
 
   private TransactionEntityFacade transactionEntityFacade;
-<span class="fc" id="L22">  private static final HTTPHelper httpHelper = new HTTPHelperImpl();</span>
-<span class="fc" id="L23">  private static final AccountJsonSerializerImpl jsonSerializer = new AccountJsonSerializerImpl();</span>
+<span class="nc" id="L22">  private static final HTTPHelper httpHelper = new HTTPHelperImpl();</span>
+<span class="nc" id="L23">  private static final AccountJsonSerializerImpl jsonSerializer = new AccountJsonSerializerImpl();</span>
 
-<span class="fc" id="L25">  public TransactionLogicFacadeImpl(TransactionEntityFacade transactionEntityFacade) {</span>
-<span class="fc" id="L26">    this.transactionEntityFacade = transactionEntityFacade;</span>
-<span class="fc" id="L27">  }</span>
+<span class="nc" id="L25">  public TransactionLogicFacadeImpl(TransactionEntityFacade transactionEntityFacade) {</span>
+<span class="nc" id="L26">    this.transactionEntityFacade = transactionEntityFacade;</span>
+<span class="nc" id="L27">  }</span>
 
   @Override
   public boolean addTransaction(String type, long id, Integer amount, boolean status){
-<span class="fc" id="L31">    return transactionEntityFacade.addTransaction(type, id, amount, status);</span>
+<span class="nc" id="L31">    return transactionEntityFacade.addTransaction(type, id, amount, status);</span>
   }
 
   @Override
-  public String getTransactions(long id){
-<span class="fc" id="L36">    List&lt;Transaction&gt; asdf = transactionEntityFacade.findTransactions(id);</span>
-<span class="fc" id="L37">    Gson gson = new Gson();</span>
-<span class="fc" id="L38">    String strlst = gson.toJson(asdf);</span>
-<span class="fc" id="L39">    return strlst;</span>
+  public List&lt;Transaction&gt; getTransactions(long id){
+<span class="nc" id="L36">    List&lt;Transaction&gt; asdf = transactionEntityFacade.findTransactions(id);</span>
+<span class="nc" id="L37">    return asdf;</span>
   }
 
 }
