@@ -11,17 +11,19 @@ import java.util.List;
 import com.google.gson.Gson;
 import javax.persistence.LockModeType;
 import se.liu.ida.tdp024.account.util.logger.KafkaObject;
+import se.liu.ida.tdp024.account.data.api.facade.TransactionEntityFacade;
+import se.liu.ida.tdp024.account.data.impl.db.facade.TransactionEntityFacadeDB;
 
 
 
 public class AccountEntityFacadeDB implements AccountEntityFacade {
 
   private static final KafkaObject kafkaSender = new KafkaObject();
-  // private TransactionEntityFacadeDB transactionEntityFacadeDB;
-  //
-  // public AccountEntityFacadeDB(TransactionEntityFacadeDB tef){
-  //   transactionEntityFacadeDB = tef;
-  // }
+  private TransactionEntityFacade transactionEntityFacadeDB;
+
+  public AccountEntityFacadeDB(TransactionEntityFacade tef){
+    transactionEntityFacadeDB = tef;
+  }
 
 
   @Override
@@ -93,10 +95,10 @@ public class AccountEntityFacadeDB implements AccountEntityFacade {
       return false;
     }
     boolean status = foundaccount.removeHoldings(amount);
-
-    //boolean transStatus = transactionEntityFacadeDB.addTransaction("DEBIT", id, amount, status);
+    //em.merge(foundaccount);
     em.getTransaction().commit();
     em.close();
+    boolean transStatus = transactionEntityFacadeDB.addTransaction("DEBIT", amount, status, foundaccount);
     //kafkaSender.sendToKafka("error-events", "{DATA (account): Debit was succesfull.}");
     return status;
   }
@@ -118,9 +120,10 @@ public class AccountEntityFacadeDB implements AccountEntityFacade {
       return false;
     }
     boolean status = foundaccount.addHoldings(amount);
-    //boolean transStatus = transactionEntityFacadeDB.addTransaction("DEBIT", id, amount, status);
+    //em.merge(foundaccount);
     em.getTransaction().commit();
     em.close();
+    boolean transStatus = transactionEntityFacadeDB.addTransaction("CREDIT", amount, status, foundaccount);
     //kafkaSender.sendToKafka("error-events", "{DATA (account): Credit was succesfull. Adding given amount to account}");
     return status;
   }

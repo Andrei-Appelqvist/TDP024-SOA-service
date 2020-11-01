@@ -22,7 +22,7 @@ public class TransactionEntityFacadeTest {
 
   //---- Unit under test ----//
   private TransactionEntityFacade transactionEntityFacade = new TransactionEntityFacadeDB();
-  private AccountEntityFacade accountEntityFacade = new AccountEntityFacadeDB();
+  private AccountEntityFacade accountEntityFacade = new AccountEntityFacadeDB(transactionEntityFacade);
   private StorageFacade storageFacade = new StorageFacadeDB();
   public String accounttype = "CHECK";
   public String personkey = "3";
@@ -30,12 +30,14 @@ public class TransactionEntityFacadeTest {
   public String type = "CREDIT";
   public Integer amount = 200;
   public boolean status = true;
-  public long id = makeAcc();
+  public Account acc = makeAcc();
+  public long id;
 
-  public long makeAcc(){
+  public Account makeAcc(){
     boolean acc = accountEntityFacade.create(accounttype, personkey, bankkey);
     List<Account> existingAccounts = accountEntityFacade.findAccounts("3");
-    return existingAccounts.get(0).getId();
+    this.id = existingAccounts.get(0).getId();
+    return existingAccounts.get(0);
   }
 
   @After
@@ -45,30 +47,28 @@ public class TransactionEntityFacadeTest {
 
   @Test
   public void testAdd(){
-    boolean transaction = transactionEntityFacade.addTransaction(type, id, amount, status);
+    boolean transaction = transactionEntityFacade.addTransaction(type, amount, status, acc);
     Assert.assertEquals(transaction, true);
-    transaction = transactionEntityFacade.addTransaction("DEBIT", id, amount, status);
+    transaction = transactionEntityFacade.addTransaction("DEBIT", amount, status, acc);
     Assert.assertEquals(transaction, true);
-    transaction = transactionEntityFacade.addTransaction("FREE REAL ESTATE", id, amount, status);
+    transaction = transactionEntityFacade.addTransaction("FREE REAL ESTATE", amount, status, acc);
     Assert.assertEquals(transaction, false);
-    transaction = transactionEntityFacade.addTransaction(type, 50, amount, status);
-    Assert.assertEquals(transaction, false);
-    transaction = transactionEntityFacade.addTransaction(type, id, -200, status);
+    transaction = transactionEntityFacade.addTransaction(type, -200, status, acc);
     Assert.assertEquals(transaction, false);
   }
 
   @Test
   public void testFind(){
-    boolean transaction = transactionEntityFacade.addTransaction(type, id, amount, status);
+    boolean transaction = transactionEntityFacade.addTransaction(type, amount, status, acc);
     Assert.assertEquals(transaction, true);
 
-    transaction = transactionEntityFacade.addTransaction("DEBIT", id, amount, status);
+    transaction = transactionEntityFacade.addTransaction("DEBIT", amount, status, acc);
     Assert.assertEquals(transaction, true);
 
-    transaction = transactionEntityFacade.addTransaction(type, id, 1337, status);
+    transaction = transactionEntityFacade.addTransaction(type, 1337, status, acc);
     Assert.assertEquals(transaction, true);
 
-    transaction = transactionEntityFacade.addTransaction(type, id, 420, false);
+    transaction = transactionEntityFacade.addTransaction(type, 420, false, acc);
     Assert.assertEquals(transaction, true);
 
     List<Transaction> trans = transactionEntityFacade.findTransactions(id);

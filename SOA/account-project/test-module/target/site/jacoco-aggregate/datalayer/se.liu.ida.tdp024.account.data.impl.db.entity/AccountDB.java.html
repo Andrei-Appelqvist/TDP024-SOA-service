@@ -8,66 +8,66 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 
 @Entity
-<span class="nc" id="L11">public class AccountDB implements Account {</span>
+<span class="fc" id="L11">public class AccountDB implements Account {</span>
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private long id;
 
   private String personKey;
-<span class="nc" id="L18">  private String accountType = new String(&quot;CHECKING&quot;);</span>
+<span class="fc" id="L18">  private String accountType = new String(&quot;CHECKING&quot;);</span>
   private String bankKey;
   private Integer holdings;
 
 
   public long getId(){
-<span class="nc" id="L24">    return id;</span>
+<span class="fc" id="L24">    return id;</span>
   }
 
   public void setPersonKey(String personKey){
-<span class="nc" id="L28">      this.personKey = personKey;</span>
-<span class="nc" id="L29">  }</span>
+<span class="fc" id="L28">      this.personKey = personKey;</span>
+<span class="fc" id="L29">  }</span>
 
   public String getPersonKey(){
-<span class="nc" id="L32">      return personKey;</span>
+<span class="fc" id="L32">      return personKey;</span>
   }
 
 
   public void setAccountType(String accountType){
-<span class="nc" id="L37">    this.accountType = accountType;</span>
-<span class="nc" id="L38">  }</span>
+<span class="fc" id="L37">    this.accountType = accountType;</span>
+<span class="fc" id="L38">  }</span>
 
   public String getAccountType(){
-<span class="nc" id="L41">    return accountType;</span>
+<span class="fc" id="L41">    return accountType;</span>
   }
 
   public String getBankKey(){
-<span class="nc" id="L45">    return bankKey;</span>
+<span class="fc" id="L45">    return bankKey;</span>
   }
 
   public void setBankKey(String bankKey){
-<span class="nc" id="L49">    this.bankKey = bankKey;</span>
-<span class="nc" id="L50">  }</span>
+<span class="fc" id="L49">    this.bankKey = bankKey;</span>
+<span class="fc" id="L50">  }</span>
 
   public Integer getHoldings(){
-<span class="nc" id="L53">    return holdings;</span>
+<span class="fc" id="L53">    return holdings;</span>
   }
 
   public void setHoldings(Integer holdings){
-<span class="nc" id="L57">    this.holdings = holdings;</span>
-<span class="nc" id="L58">  }</span>
+<span class="fc" id="L57">    this.holdings = holdings;</span>
+<span class="fc" id="L58">  }</span>
 
   public boolean addHoldings(Integer holdings){
-<span class="nc" id="L61">    this.holdings += holdings;</span>
-<span class="nc" id="L62">    return true;</span>
+<span class="fc" id="L61">    this.holdings += holdings;</span>
+<span class="fc" id="L62">    return true;</span>
   }
 
   public boolean removeHoldings(Integer holdings){
-<span class="nc bnc" id="L66" title="All 2 branches missed.">    if(this.holdings - holdings &gt;= 0) {</span>
-<span class="nc" id="L67">      this.holdings -= holdings;</span>
-<span class="nc" id="L68">      return true;</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">    if(this.holdings - holdings &gt;= 0) {</span>
+<span class="fc" id="L67">      this.holdings -= holdings;</span>
+<span class="fc" id="L68">      return true;</span>
     }
-<span class="nc" id="L70">    return false;</span>
+<span class="fc" id="L70">    return false;</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

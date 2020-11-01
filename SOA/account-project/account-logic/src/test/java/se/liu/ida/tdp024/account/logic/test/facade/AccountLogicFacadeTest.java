@@ -22,6 +22,8 @@ import com.google.gson.Gson;
 import java.util.List;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
+import se.liu.ida.tdp024.account.data.api.facade.TransactionEntityFacade;
+import se.liu.ida.tdp024.account.data.impl.db.facade.TransactionEntityFacadeDB;
 // import se.liu.ida.tdp024.account.util.json.AccountJsonSerializer;
 // import se.liu.ida.tdp024.account.util.json.AccountJsonSerializerImpl;
 
@@ -30,7 +32,8 @@ public class AccountLogicFacadeTest {
 
 
     //--- Unit under test ---//
-    public AccountLogicFacade accountLogicFacade = new AccountLogicFacadeImpl(new AccountEntityFacadeDB());
+    private final TransactionEntityFacade transFacadeDb = new TransactionEntityFacadeDB();
+    public AccountLogicFacade accountLogicFacade = new AccountLogicFacadeImpl(new AccountEntityFacadeDB(transFacadeDb));
     public StorageFacade storageFacade = new StorageFacadeDB();
     public String person = "3";
     public String bank = "NORDEA";

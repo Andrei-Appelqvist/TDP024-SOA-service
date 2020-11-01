@@ -1,4 +1,4 @@
-package se.liu.ida.tdp024.account.logic.test.facade;
+ package se.liu.ida.tdp024.account.logic.test.facade;
 
 import org.junit.After;
 import org.junit.Test;
@@ -23,8 +23,9 @@ import java.util.Date;
 
 public class TransactionLogicFacadeTest {
     //--- Unit under test ---//
-    public TransactionLogicFacade transactionLogicFacade = new TransactionLogicFacadeImpl(new TransactionEntityFacadeDB());
-    public AccountLogicFacade accountLogicFacade = new AccountLogicFacadeImpl(new AccountEntityFacadeDB());
+    private final TransactionEntityFacade transFacadeDb = new TransactionEntityFacadeDB();
+    public TransactionLogicFacade transactionLogicFacade = new TransactionLogicFacadeImpl(transFacadeDb);
+    public AccountLogicFacade accountLogicFacade = new AccountLogicFacadeImpl(new AccountEntityFacadeDB(transFacadeDb));
     public StorageFacade storageFacade = new StorageFacadeDB();
     public String person = "3";
     public String bank = "NORDEA";
@@ -42,32 +43,18 @@ public class TransactionLogicFacadeTest {
     }
 
     @Test
-    public void testAdd() {
-      boolean reg = accountLogicFacade.register(person, bank, accounttype);
-      Assert.assertEquals(reg, true);
-      boolean add = transactionLogicFacade.addTransaction(type, id, amount, status);
-      Assert.assertEquals(add, true);
-      add = transactionLogicFacade.addTransaction(type, id, amount, false);
-      Assert.assertEquals(add, true);
-      add = transactionLogicFacade.addTransaction("HEIST", id, amount, status);
-      Assert.assertEquals(add, false);
-      add = transactionLogicFacade.addTransaction(type, 30, amount, status);
-      Assert.assertEquals(add, false);
-      add = transactionLogicFacade.addTransaction(type, id, -300, status);
-      Assert.assertEquals(add, false);
-    }
-
-    @Test
     public void testGet() {
       boolean reg = accountLogicFacade.register(person, bank, accounttype);
       Assert.assertEquals(reg, true);
-      boolean add = transactionLogicFacade.addTransaction(type, id, amount, status);
+      Account acc = accountLogicFacade.findPerson(person).get(0);
+
+      boolean add = transactionLogicFacade.addTransaction(type, amount, status, acc);
       Assert.assertEquals(add, true);
-      add = transactionLogicFacade.addTransaction("DEBIT", id, amount, status);
+      add = transactionLogicFacade.addTransaction("DEBIT", amount, status, acc);
       Assert.assertEquals(add, true);
-      add = transactionLogicFacade.addTransaction("DEBIT", id, 350, status);
+      add = transactionLogicFacade.addTransaction("DEBIT", 350, status, acc);
       Assert.assertEquals(add, true);
-      add = transactionLogicFacade.addTransaction(type, id, 322, false);
+      add = transactionLogicFacade.addTransaction(type, 322, false, acc);
       Assert.assertEquals(add, true);
 
       List<Transaction> transactions = transactionLogicFacade.getTransactions(id);

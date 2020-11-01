@@ -11,128 +11,131 @@ import java.util.List;
 import com.google.gson.Gson;
 import javax.persistence.LockModeType;
 import se.liu.ida.tdp024.account.util.logger.KafkaObject;
+import se.liu.ida.tdp024.account.data.api.facade.TransactionEntityFacade;
+import se.liu.ida.tdp024.account.data.impl.db.facade.TransactionEntityFacadeDB;
 
 
 
-<span class="nc" id="L17">public class AccountEntityFacadeDB implements AccountEntityFacade {</span>
+public class AccountEntityFacadeDB implements AccountEntityFacade {
 
-<span class="nc" id="L19">  private static final KafkaObject kafkaSender = new KafkaObject();</span>
-  // private TransactionEntityFacadeDB transactionEntityFacadeDB;
-  //
-  // public AccountEntityFacadeDB(TransactionEntityFacadeDB tef){
-  //   transactionEntityFacadeDB = tef;
-  // }
+<span class="fc" id="L21">  private static final KafkaObject kafkaSender = new KafkaObject();</span>
+  private TransactionEntityFacade transactionEntityFacadeDB;
+
+<span class="fc" id="L24">  public AccountEntityFacadeDB(TransactionEntityFacade tef){</span>
+<span class="fc" id="L25">    transactionEntityFacadeDB = tef;</span>
+<span class="fc" id="L26">  }</span>
 
 
   @Override
   public boolean create(String accounttype, String personkey, String bankkey){
-<span class="nc" id="L29">    kafkaSender.sendToKafka(&quot;transaction-topic&quot;, &quot;{DATA (account): Create transaction started.}&quot;);</span>
-<span class="nc" id="L30">    ArrayList&lt;String&gt; allowed = new ArrayList();</span>
-<span class="nc" id="L31">    allowed.add(&quot;CHECK&quot;);</span>
-<span class="nc" id="L32">    allowed.add(&quot;SAVINGS&quot;);</span>
-<span class="nc bnc" id="L33" title="All 2 branches missed.">    if(!allowed.contains(accounttype)){</span>
-<span class="nc" id="L34">      kafkaSender.sendToKafka(&quot;transaction-topic&quot;, &quot;{DATA (account) (account): Create failed. Account type was not CHECK or SAVINGS.}&quot;);</span>
-<span class="nc" id="L35">      return false;</span>
+<span class="fc" id="L31">    kafkaSender.sendToKafka(&quot;transaction-topic&quot;, &quot;{DATA (account): Create transaction started.}&quot;);</span>
+<span class="fc" id="L32">    ArrayList&lt;String&gt; allowed = new ArrayList();</span>
+<span class="fc" id="L33">    allowed.add(&quot;CHECK&quot;);</span>
+<span class="fc" id="L34">    allowed.add(&quot;SAVINGS&quot;);</span>
+<span class="fc bfc" id="L35" title="All 2 branches covered.">    if(!allowed.contains(accounttype)){</span>
+<span class="fc" id="L36">      kafkaSender.sendToKafka(&quot;transaction-topic&quot;, &quot;{DATA (account) (account): Create failed. Account type was not CHECK or SAVINGS.}&quot;);</span>
+<span class="fc" id="L37">      return false;</span>
     }
-<span class="nc" id="L37">    EntityManager em = EMF.getEntityManager();</span>
+<span class="fc" id="L39">    EntityManager em = EMF.getEntityManager();</span>
     try{
-<span class="nc" id="L39">      em.getTransaction().begin();</span>
-<span class="nc" id="L40">      Account acc = new AccountDB();</span>
-<span class="nc" id="L41">      acc.setPersonKey(personkey);</span>
-<span class="nc" id="L42">      acc.setAccountType(accounttype);</span>
-<span class="nc" id="L43">      acc.setHoldings(0);</span>
-<span class="nc" id="L44">      acc.setBankKey(bankkey);</span>
-<span class="nc" id="L45">      em.persist(acc);</span>
-<span class="nc" id="L46">      em.getTransaction().commit();</span>
-<span class="nc" id="L47">      kafkaSender.sendToKafka(&quot;transaction-topic&quot;, &quot;{DATA (account): Create was succesfull.}&quot;);</span>
-<span class="nc" id="L48">      return true;</span>
-<span class="nc" id="L49">    } catch(Exception e){</span>
-<span class="nc" id="L50">      kafkaSender.sendToKafka(&quot;transaction-topic&quot;, &quot;{DATA (account): Something went wrong: &quot;+e+&quot;}&quot;);</span>
-<span class="nc bnc" id="L51" title="All 2 branches missed.">      if(em.getTransaction().isActive()){</span>
-<span class="nc" id="L52">        em.getTransaction().rollback();</span>
+<span class="fc" id="L41">      em.getTransaction().begin();</span>
+<span class="fc" id="L42">      Account acc = new AccountDB();</span>
+<span class="fc" id="L43">      acc.setPersonKey(personkey);</span>
+<span class="fc" id="L44">      acc.setAccountType(accounttype);</span>
+<span class="fc" id="L45">      acc.setHoldings(0);</span>
+<span class="fc" id="L46">      acc.setBankKey(bankkey);</span>
+<span class="fc" id="L47">      em.persist(acc);</span>
+<span class="fc" id="L48">      em.getTransaction().commit();</span>
+<span class="fc" id="L49">      kafkaSender.sendToKafka(&quot;transaction-topic&quot;, &quot;{DATA (account): Create was succesfull.}&quot;);</span>
+<span class="fc" id="L50">      return true;</span>
+<span class="nc" id="L51">    } catch(Exception e){</span>
+<span class="nc" id="L52">      kafkaSender.sendToKafka(&quot;transaction-topic&quot;, &quot;{DATA (account): Something went wrong: &quot;+e+&quot;}&quot;);</span>
+<span class="nc bnc" id="L53" title="All 2 branches missed.">      if(em.getTransaction().isActive()){</span>
+<span class="nc" id="L54">        em.getTransaction().rollback();</span>
       }
-<span class="nc" id="L54">      return false;</span>
+<span class="nc" id="L56">      return false;</span>
     } finally {
-<span class="nc" id="L56">      em.close();</span>
+<span class="fc" id="L58">      em.close();</span>
     }
   }
 
   @Override
   public List&lt;Account&gt; findAccounts(String personkey){
-<span class="nc" id="L62">    kafkaSender.sendToKafka(&quot;transaction-topic&quot;, &quot;{DATA (account): Find Accounts transaction started.}&quot;);</span>
-<span class="nc" id="L63">    EntityManager em = EMF.getEntityManager();</span>
-<span class="nc" id="L64">    List&lt;Account&gt; accounts = new ArrayList();</span>
+<span class="fc" id="L64">    kafkaSender.sendToKafka(&quot;transaction-topic&quot;, &quot;{DATA (account): Find Accounts transaction started.}&quot;);</span>
+<span class="fc" id="L65">    EntityManager em = EMF.getEntityManager();</span>
+<span class="fc" id="L66">    List&lt;Account&gt; accounts = new ArrayList();</span>
     try {
-<span class="nc" id="L66">      Query query = em.createQuery(&quot;SELECT c FROM AccountDB c WHERE c.personKey = :personkey&quot;);</span>
-<span class="nc" id="L67">      query.setParameter(&quot;personkey&quot;, personkey);</span>
-<span class="nc" id="L68">      accounts = query.getResultList();</span>
-<span class="nc" id="L69">      kafkaSender.sendToKafka(&quot;transaction-topic&quot;, &quot;{DATA (account): List of accounts succesfully returned}&quot;);</span>
-<span class="nc" id="L70">      return accounts;</span>
-<span class="nc" id="L71">    } catch (Exception e){</span>
-<span class="nc" id="L72">      kafkaSender.sendToKafka(&quot;transaction-topic&quot;, &quot;{DATA (account): Something went wrong: &quot;+e+&quot;}&quot;);</span>
-<span class="nc" id="L73">      return accounts;</span>
+<span class="fc" id="L68">      Query query = em.createQuery(&quot;SELECT c FROM AccountDB c WHERE c.personKey = :personkey&quot;);</span>
+<span class="fc" id="L69">      query.setParameter(&quot;personkey&quot;, personkey);</span>
+<span class="fc" id="L70">      accounts = query.getResultList();</span>
+<span class="fc" id="L71">      kafkaSender.sendToKafka(&quot;transaction-topic&quot;, &quot;{DATA (account): List of accounts succesfully returned}&quot;);</span>
+<span class="fc" id="L72">      return accounts;</span>
+<span class="nc" id="L73">    } catch (Exception e){</span>
+<span class="nc" id="L74">      kafkaSender.sendToKafka(&quot;transaction-topic&quot;, &quot;{DATA (account): Something went wrong: &quot;+e+&quot;}&quot;);</span>
+<span class="nc" id="L75">      return accounts;</span>
     } finally{
-<span class="nc" id="L75">      em.close();</span>
+<span class="fc" id="L77">      em.close();</span>
     }
   }
 
   @Override
   public boolean debitAccount(long id, Integer amount){
     //kafkaSender.sendToKafka(&quot;error-events&quot;, &quot;{DATA (account): Debit transaction started}&quot;);
-<span class="nc bnc" id="L82" title="All 2 branches missed.">    if(amount &lt; 0){</span>
+<span class="fc bfc" id="L84" title="All 2 branches covered.">    if(amount &lt; 0){</span>
       //kafkaSender.sendToKafka(&quot;error-events&quot;, &quot;{DATA (account): Debit failed. Negative amount is not allowed.}&quot;);
-<span class="nc" id="L84">      return false;</span>
+<span class="fc" id="L86">      return false;</span>
     }
-<span class="nc" id="L86">    EntityManager em = EMF.getEntityManager();</span>
-<span class="nc" id="L87">    em.getTransaction().begin();</span>
-<span class="nc" id="L88">    Account foundaccount = em.find(AccountDB.class, id, LockModeType.PESSIMISTIC_WRITE);</span>
-<span class="nc bnc" id="L89" title="All 2 branches missed.">    if(foundaccount == null){</span>
-<span class="nc" id="L90">      em.getTransaction().commit();</span>
-<span class="nc" id="L91">      em.close();</span>
+<span class="fc" id="L88">    EntityManager em = EMF.getEntityManager();</span>
+<span class="fc" id="L89">    em.getTransaction().begin();</span>
+<span class="fc" id="L90">    Account foundaccount = em.find(AccountDB.class, id, LockModeType.PESSIMISTIC_WRITE);</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">    if(foundaccount == null){</span>
+<span class="fc" id="L92">      em.getTransaction().commit();</span>
+<span class="fc" id="L93">      em.close();</span>
       //kafkaSender.sendToKafka(&quot;error-events&quot;, &quot;{DATA (account): No account with given id could be found}&quot;);
-<span class="nc" id="L93">      return false;</span>
+<span class="fc" id="L95">      return false;</span>
     }
-<span class="nc" id="L95">    boolean status = foundaccount.removeHoldings(amount);</span>
-
-    //boolean transStatus = transactionEntityFacadeDB.addTransaction(&quot;DEBIT&quot;, id, amount, status);
-<span class="nc" id="L98">    em.getTransaction().commit();</span>
-<span class="nc" id="L99">    em.close();</span>
+<span class="fc" id="L97">    boolean status = foundaccount.removeHoldings(amount);</span>
+    //em.merge(foundaccount);
+<span class="fc" id="L99">    em.getTransaction().commit();</span>
+<span class="fc" id="L100">    em.close();</span>
+<span class="fc" id="L101">    boolean transStatus = transactionEntityFacadeDB.addTransaction(&quot;DEBIT&quot;, amount, status, foundaccount);</span>
     //kafkaSender.sendToKafka(&quot;error-events&quot;, &quot;{DATA (account): Debit was succesfull.}&quot;);
-<span class="nc" id="L101">    return status;</span>
+<span class="fc" id="L103">    return status;</span>
   }
 
   @Override
   public boolean creditAccount(long id, Integer amount){
     //kafkaSender.sendToKafka(&quot;error-events&quot;, &quot;{DATA (account): Credit transaction started}&quot;);
-<span class="nc bnc" id="L107" title="All 2 branches missed.">    if(amount &lt; 0){</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">    if(amount &lt; 0){</span>
       //kafkaSender.sendToKafka(&quot;error-events&quot;, &quot;{DATA (account): Credit failed. Negative amount is not allowed.}&quot;);
-<span class="nc" id="L109">      return false;</span>
+<span class="fc" id="L111">      return false;</span>
     }
-<span class="nc" id="L111">    EntityManager em = EMF.getEntityManager();</span>
-<span class="nc" id="L112">    em.getTransaction().begin();</span>
-<span class="nc" id="L113">    Account foundaccount = em.find(AccountDB.class, id, LockModeType.PESSIMISTIC_WRITE);</span>
-<span class="nc bnc" id="L114" title="All 2 branches missed.">    if(foundaccount == null){</span>
-<span class="nc" id="L115">      em.getTransaction().commit();</span>
-<span class="nc" id="L116">      em.close();</span>
+<span class="fc" id="L113">    EntityManager em = EMF.getEntityManager();</span>
+<span class="fc" id="L114">    em.getTransaction().begin();</span>
+<span class="fc" id="L115">    Account foundaccount = em.find(AccountDB.class, id, LockModeType.PESSIMISTIC_WRITE);</span>
+<span class="fc bfc" id="L116" title="All 2 branches covered.">    if(foundaccount == null){</span>
+<span class="fc" id="L117">      em.getTransaction().commit();</span>
+<span class="fc" id="L118">      em.close();</span>
       //kafkaSender.sendToKafka(&quot;error-events&quot;, &quot;{DATA (account): Credit failed. Account could not be found}&quot;);
-<span class="nc" id="L118">      return false;</span>
+<span class="fc" id="L120">      return false;</span>
     }
-<span class="nc" id="L120">    boolean status = foundaccount.addHoldings(amount);</span>
-    //boolean transStatus = transactionEntityFacadeDB.addTransaction(&quot;DEBIT&quot;, id, amount, status);
-<span class="nc" id="L122">    em.getTransaction().commit();</span>
-<span class="nc" id="L123">    em.close();</span>
+<span class="fc" id="L122">    boolean status = foundaccount.addHoldings(amount);</span>
+    //em.merge(foundaccount);
+<span class="fc" id="L124">    em.getTransaction().commit();</span>
+<span class="fc" id="L125">    em.close();</span>
+<span class="fc" id="L126">    boolean transStatus = transactionEntityFacadeDB.addTransaction(&quot;CREDIT&quot;, amount, status, foundaccount);</span>
     //kafkaSender.sendToKafka(&quot;error-events&quot;, &quot;{DATA (account): Credit was succesfull. Adding given amount to account}&quot;);
-<span class="nc" id="L125">    return status;</span>
+<span class="fc" id="L128">    return status;</span>
   }
 
   @Override
   public Account getAccount(long id) {
-<span class="nc" id="L130">    kafkaSender.sendToKafka(&quot;transaction-topic&quot;, &quot;{DATA (account): Get account transaction started.}&quot;);</span>
-<span class="nc" id="L131">    EntityManager em = EMF.getEntityManager();</span>
-<span class="nc" id="L132">    Account foundaccount = em.find(AccountDB.class, id);</span>
-<span class="nc" id="L133">    em.close();</span>
-<span class="nc" id="L134">    kafkaSender.sendToKafka(&quot;transaction-topic&quot;, &quot;{DATA (account): Account returned.}&quot;);</span>
-<span class="nc" id="L135">    return foundaccount;</span>
+<span class="fc" id="L133">    kafkaSender.sendToKafka(&quot;transaction-topic&quot;, &quot;{DATA (account): Get account transaction started.}&quot;);</span>
+<span class="fc" id="L134">    EntityManager em = EMF.getEntityManager();</span>
+<span class="fc" id="L135">    Account foundaccount = em.find(AccountDB.class, id);</span>
+<span class="fc" id="L136">    em.close();</span>
+<span class="fc" id="L137">    kafkaSender.sendToKafka(&quot;transaction-topic&quot;, &quot;{DATA (account): Account returned.}&quot;);</span>
+<span class="fc" id="L138">    return foundaccount;</span>
   }
 
 }

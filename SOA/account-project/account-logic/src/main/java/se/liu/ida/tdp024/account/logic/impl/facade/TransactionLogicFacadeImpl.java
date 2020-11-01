@@ -12,6 +12,7 @@ import se.liu.ida.tdp024.account.util.json.AccountJsonSerializerImpl;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.util.*;
+import se.liu.ida.tdp024.account.data.api.entity.Account;
 
 
 
@@ -27,8 +28,8 @@ public class TransactionLogicFacadeImpl implements TransactionLogicFacade {
   }
 
   @Override
-  public boolean addTransaction(String type, long id, Integer amount, boolean status){
-    return transactionEntityFacade.addTransaction(type, id, amount, status);
+  public boolean addTransaction(String type, Integer amount, boolean status, Account acc){
+    return transactionEntityFacade.addTransaction(type, amount, status, acc);
   }
 
   @Override

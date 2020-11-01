@@ -30,28 +30,28 @@ import java.util.Date;
 public class KafkaObject {
 
   public void sendToKafka(String channel , String message) {
-    // SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    // Date date = new Date(System.currentTimeMillis());
-    // String datetime = formatter.format(date);
-    //
-    // Properties props = new Properties();
-    // props.put("bootstrap.servers", "localhost:9092");
-    // props.put("transactional.id", "my-transactional-id");
-    // Producer<String, String> producer = new KafkaProducer<>(props, new StringSerializer(), new StringSerializer());
-    // producer.initTransactions();
-    // try{
-    //
-    //   producer.beginTransaction();
-    //   producer.send(new ProducerRecord<>(channel, "Can't find","["+datetime+"]"+message));
-    // } catch (ProducerFencedException | OutOfOrderSequenceException | AuthorizationException e) {
-    //   // We can't recover from these exceptions, so our only option is to close the producer and exit.
-    //   ;
-    //   producer.close();
-    // } catch (final KafkaException e) {
-    //   // For all other exceptions, just abort the transaction and try again.
-    //
-    //   producer.abortTransaction();
-    // }
-    // producer.close();
+    SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    Date date = new Date(System.currentTimeMillis());
+    String datetime = formatter.format(date);
+
+    Properties props = new Properties();
+    props.put("bootstrap.servers", "localhost:9092");
+    props.put("transactional.id", "my-transactional-id");
+    Producer<String, String> producer = new KafkaProducer<>(props, new StringSerializer(), new StringSerializer());
+    producer.initTransactions();
+    try{
+
+      producer.beginTransaction();
+      producer.send(new ProducerRecord<>(channel, "Can't find","["+datetime+"]"+message));
+    } catch (ProducerFencedException | OutOfOrderSequenceException | AuthorizationException e) {
+      // We can't recover from these exceptions, so our only option is to close the producer and exit.
+      ;
+      producer.close();
+    } catch (final KafkaException e) {
+      // For all other exceptions, just abort the transaction and try again.
+
+      producer.abortTransaction();
+    }
+    producer.close();
   }
 }

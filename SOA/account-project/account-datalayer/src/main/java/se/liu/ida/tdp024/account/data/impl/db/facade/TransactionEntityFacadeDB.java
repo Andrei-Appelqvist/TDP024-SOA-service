@@ -18,7 +18,7 @@ public class TransactionEntityFacadeDB implements TransactionEntityFacade {
   private static final KafkaObject kafkaSender = new KafkaObject();
 
   @Override
-  public boolean addTransaction(String type, long id, Integer amount, boolean status){
+  public boolean addTransaction(String type, Integer amount, boolean status, Account acc){
     kafkaSender.sendToKafka("transaction-topic", "{DATA (transaction): Add transaction started.}");
     ArrayList<String> allowed = new ArrayList();
     allowed.add("CREDIT");
@@ -32,7 +32,7 @@ public class TransactionEntityFacadeDB implements TransactionEntityFacade {
     try {
       em.getTransaction().begin();
 
-      Account acc = em.find(AccountDB.class, id);
+      //Account acc = em.find(AccountDB.class, id);
       Transaction trans = new TransactionDB();
 
       if (acc == null)

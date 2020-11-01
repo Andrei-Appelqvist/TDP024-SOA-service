@@ -16,49 +16,49 @@ import se.liu.ida.tdp024.account.data.api.entity.Account;
 public class AccountLogicFacadeImpl implements AccountLogicFacade {
 
     private AccountEntityFacade accountEntityFacade;
-<span class="nc" id="L19">    private static final HTTPHelper httpHelper = new HTTPHelperImpl();</span>
-<span class="nc" id="L20">    private static final AccountJsonSerializerImpl jsonSerializer = new AccountJsonSerializerImpl();</span>
+<span class="fc" id="L19">    private static final HTTPHelper httpHelper = new HTTPHelperImpl();</span>
+<span class="fc" id="L20">    private static final AccountJsonSerializerImpl jsonSerializer = new AccountJsonSerializerImpl();</span>
     //public static final String ENDPOINT = &quot;http://localhost:8080/account-rest/&quot;
 
-<span class="nc" id="L23">    public AccountLogicFacadeImpl(AccountEntityFacade accountEntityFacade) {</span>
-<span class="nc" id="L24">        this.accountEntityFacade = accountEntityFacade;</span>
-<span class="nc" id="L25">    }</span>
+<span class="fc" id="L23">    public AccountLogicFacadeImpl(AccountEntityFacade accountEntityFacade) {</span>
+<span class="fc" id="L24">        this.accountEntityFacade = accountEntityFacade;</span>
+<span class="fc" id="L25">    }</span>
 
     @Override
     public boolean register(String person, String bank, String accounttype){
       //Kolla om person finns mot Python API (PersonApi)
-<span class="nc" id="L30">      String response = httpHelper.get(&quot;http://localhost:8060/person&quot; + &quot;/find.key?key=&quot;+person);</span>
-<span class="nc bnc" id="L31" title="All 2 branches missed.">      if (response.equals(&quot;null&quot;)){</span>
-<span class="nc" id="L32">        return false;</span>
+<span class="fc" id="L30">      String response = httpHelper.get(&quot;http://localhost:8060/person&quot; + &quot;/find.key?key=&quot;+person);</span>
+<span class="fc bfc" id="L31" title="All 2 branches covered.">      if (response.equals(&quot;null&quot;)){</span>
+<span class="fc" id="L32">        return false;</span>
       }
       //Hämta bankkey med hjälp av namn från PythonApi (BankApi)
-<span class="nc" id="L35">      response = httpHelper.get(&quot;http://localhost:8070/bank&quot; + &quot;/find.name?name=&quot;+bank);</span>
-<span class="nc bnc" id="L36" title="All 2 branches missed.">      if (response.equals(&quot;null&quot;)){</span>
-<span class="nc" id="L37">        return false;</span>
+<span class="fc" id="L35">      response = httpHelper.get(&quot;http://localhost:8070/bank&quot; + &quot;/find.name?name=&quot;+bank);</span>
+<span class="fc bfc" id="L36" title="All 2 branches covered.">      if (response.equals(&quot;null&quot;)){</span>
+<span class="fc" id="L37">        return false;</span>
       }
 
-<span class="nc" id="L40">      Map&lt;String, Object&gt; bankObject = jsonSerializer.fromJson(response, Map.class);</span>
-<span class="nc" id="L41">      Integer bankint = (Integer) bankObject.get(&quot;key&quot;);</span>
-<span class="nc" id="L42">      String bankkey = Integer.toString(bankint);</span>
-<span class="nc" id="L43">      return accountEntityFacade.create(accounttype, person, bankkey);</span>
+<span class="fc" id="L40">      Map&lt;String, Object&gt; bankObject = jsonSerializer.fromJson(response, Map.class);</span>
+<span class="fc" id="L41">      Integer bankint = (Integer) bankObject.get(&quot;key&quot;);</span>
+<span class="fc" id="L42">      String bankkey = Integer.toString(bankint);</span>
+<span class="fc" id="L43">      return accountEntityFacade.create(accounttype, person, bankkey);</span>
     }
 
     @Override
     public List&lt;Account&gt; findPerson(String person){
-<span class="nc" id="L48">      List&lt;Account&gt; accounts = accountEntityFacade.findAccounts(person);</span>
+<span class="fc" id="L48">      List&lt;Account&gt; accounts = accountEntityFacade.findAccounts(person);</span>
       // Gson gson = new Gson();
       // String strlst = gson.toJson(accounts);
-<span class="nc" id="L51">      return accounts;</span>
+<span class="fc" id="L51">      return accounts;</span>
     }
 
     @Override
     public boolean debitAccount(long id, Integer amount){
-<span class="nc" id="L56">      return accountEntityFacade.debitAccount(id, amount);</span>
+<span class="fc" id="L56">      return accountEntityFacade.debitAccount(id, amount);</span>
     }
 
     @Override
     public boolean creditAccount(long id, Integer amount){
-<span class="nc" id="L61">      return accountEntityFacade.creditAccount(id, amount);</span>
+<span class="fc" id="L61">      return accountEntityFacade.creditAccount(id, amount);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

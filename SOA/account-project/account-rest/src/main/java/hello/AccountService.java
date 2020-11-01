@@ -9,6 +9,7 @@ import se.liu.ida.tdp024.account.logic.api.facade.TransactionLogicFacade;
 import se.liu.ida.tdp024.account.logic.impl.facade.AccountLogicFacadeImpl;
 import se.liu.ida.tdp024.account.logic.impl.facade.TransactionLogicFacadeImpl;
 import se.liu.ida.tdp024.account.data.impl.db.facade.AccountEntityFacadeDB;
+import se.liu.ida.tdp024.account.data.api.facade.TransactionEntityFacade;
 import se.liu.ida.tdp024.account.data.impl.db.facade.TransactionEntityFacadeDB;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,11 +25,10 @@ import se.liu.ida.tdp024.account.data.api.entity.Account;
 @RestController
 @RequestMapping("account-rest")
 public class AccountService {
-  private final TransactionEntityFacadeDB transFacadeDb = new TransactionEntityFacadeDB();
-  //private final TransactionLogicFacade transactionlogicfacade = new TransactionLogicFacadeImpl();
+  private final TransactionEntityFacade transFacadeDb = new TransactionEntityFacadeDB();
   private final TransactionLogicFacade transactionlogicfacade = new TransactionLogicFacadeImpl(transFacadeDb);
-  private final AccountLogicFacade accountlogicfacade = new AccountLogicFacadeImpl(new AccountEntityFacadeDB());
-  //private final AccountLogicFacade accountlogicfacade = new AccountLogicFacadeImpl(new AccountEntityFacadeDB(transFacadeDb));
+  //private final AccountLogicFacade accountlogicfacade = new AccountLogicFacadeImpl(new AccountEntityFacadeDB());
+  private final AccountLogicFacade accountlogicfacade = new AccountLogicFacadeImpl(new AccountEntityFacadeDB(transFacadeDb));
   private static final AccountJsonSerializerImpl jsonSerializer = new AccountJsonSerializerImpl();
   private static final KafkaObject kafkaSender = new KafkaObject();
 
@@ -63,7 +63,7 @@ public class AccountService {
   public String debit(@RequestParam long id, @RequestParam Integer amount) {
     kafkaSender.sendToKafka("rest-topic", "{REST: Call to route debit received}");
     boolean status = accountlogicfacade.debitAccount(id, amount);
-    transactionlogicfacade.addTransaction("DEBIT", id, amount, status);
+    //transactionlogicfacade.addTransaction("DEBIT", id, amount, status);
     if(status){
       kafkaSender.sendToKafka("rest-topic", "{REST: Call to route debit. Debit was succesfull}");
       return "OK";
@@ -78,7 +78,7 @@ public class AccountService {
   public String credit(@RequestParam long id, @RequestParam Integer amount){
     kafkaSender.sendToKafka("rest-topic", "{REST: Call to route credit received}");
     boolean status = accountlogicfacade.creditAccount(id, amount);
-    transactionlogicfacade.addTransaction("CREDIT", id, amount, status);
+    //transactionlogicfacade.addTransaction("CREDIT", id, amount, status);
     if(status)
     {
       kafkaSender.sendToKafka("rest-topic", "{REST: Call to route credit. Credit was succesfull}");

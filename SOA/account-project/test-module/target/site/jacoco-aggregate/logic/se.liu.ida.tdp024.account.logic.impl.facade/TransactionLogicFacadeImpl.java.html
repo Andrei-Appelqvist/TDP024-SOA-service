@@ -12,6 +12,7 @@ import se.liu.ida.tdp024.account.util.json.AccountJsonSerializerImpl;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.util.*;
+import se.liu.ida.tdp024.account.data.api.entity.Account;
 
 
 
@@ -19,22 +20,22 @@ public class TransactionLogicFacadeImpl implements TransactionLogicFacade {
 
 
   private TransactionEntityFacade transactionEntityFacade;
-<span class="nc" id="L22">  private static final HTTPHelper httpHelper = new HTTPHelperImpl();</span>
-<span class="nc" id="L23">  private static final AccountJsonSerializerImpl jsonSerializer = new AccountJsonSerializerImpl();</span>
+<span class="fc" id="L23">  private static final HTTPHelper httpHelper = new HTTPHelperImpl();</span>
+<span class="fc" id="L24">  private static final AccountJsonSerializerImpl jsonSerializer = new AccountJsonSerializerImpl();</span>
 
-<span class="nc" id="L25">  public TransactionLogicFacadeImpl(TransactionEntityFacade transactionEntityFacade) {</span>
-<span class="nc" id="L26">    this.transactionEntityFacade = transactionEntityFacade;</span>
-<span class="nc" id="L27">  }</span>
+<span class="fc" id="L26">  public TransactionLogicFacadeImpl(TransactionEntityFacade transactionEntityFacade) {</span>
+<span class="fc" id="L27">    this.transactionEntityFacade = transactionEntityFacade;</span>
+<span class="fc" id="L28">  }</span>
 
   @Override
-  public boolean addTransaction(String type, long id, Integer amount, boolean status){
-<span class="nc" id="L31">    return transactionEntityFacade.addTransaction(type, id, amount, status);</span>
+  public boolean addTransaction(String type, Integer amount, boolean status, Account acc){
+<span class="fc" id="L32">    return transactionEntityFacade.addTransaction(type, amount, status, acc);</span>
   }
 
   @Override
   public List&lt;Transaction&gt; getTransactions(long id){
-<span class="nc" id="L36">    List&lt;Transaction&gt; asdf = transactionEntityFacade.findTransactions(id);</span>
-<span class="nc" id="L37">    return asdf;</span>
+<span class="fc" id="L37">    List&lt;Transaction&gt; asdf = transactionEntityFacade.findTransactions(id);</span>
+<span class="fc" id="L38">    return asdf;</span>
   }
 
 }
