@@ -12,4 +12,5 @@ This project was made by Andrei Moga(Me) and Alexander.
 
 Below you can see the scheme for the system.
 
-https://www.ida.liu.se/~TDP024/labs/archi.png
+![Scheme](https://www.ida.liu.se/~TDP024/labs/archi.png)
+
